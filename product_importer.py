@@ -55,13 +55,11 @@ def add_empty_product(wb):
 
     wb.save(products_xlsx)
 
-def add_product_name(product_info, wb):
+def add_product_descrition(product_info, wb):
     products_sheet = wb.active
 
-    products_sheet.append(["" for i in range(products_sheet.max_column)])
-    row_num = products_sheet.max_row - 1
-   
     # Edit the product code
+    row_num = products_sheet.max_row
     curr_product_id = products_sheet['A' + str(row_num)].value
 
     gender_en = "mens"
@@ -110,4 +108,4 @@ if __name__ == "__main__":
     # Iterate the inputs
     for product in new_products:
         add_empty_product(wb)
-        add_product_name(product, wb)
+        add_product_descrition(product, wb)
