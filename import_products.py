@@ -330,6 +330,31 @@ def add_image(product_info, wb):
     # Write image directory
     products_sheet['O' + str(row_num)] = image_dir
 
+def add_misc(product_info, wb):
+    products_sheet = wb['Products']
+    row_num = products_sheet.max_row
+
+    
+    products_sheet['L'  + str(row_num)] = 1      #quantity
+    products_sheet['P'  + str(row_num)] = 'yes'  #shipping
+    products_sheet['R'  + str(row_num)] = 0      #points
+    products_sheet['S'  + str(row_num)] = '2018-07-26 14:00:00' #date_added
+    products_sheet['T' + str(row_num)] = '2018-07-26 14:00:00'#date_modified
+    products_sheet['U'  + str(row_num)] = '2018-07-26' #date_available
+    products_sheet['V'  + str(row_num)] = 0      #weight
+    products_sheet['W'  + str(row_num)] = 'kg'   #weight_unit
+    products_sheet['X'  + str(row_num)] = 0      #length
+    products_sheet['Y'  + str(row_num)] = 0      #width
+    products_sheet['Z'  + str(row_num)] = 0      #height
+    products_sheet['AA' + str(row_num)] = 'cm'   #length_unit
+    products_sheet['AB' + str(row_num)] = 'true' #status
+    products_sheet['AC' + str(row_num)] = 0      #tax_class_id
+    products_sheet['AM' + str(row_num)] = 6      #stock_status_id
+    products_sheet['AN' + str(row_num)] = 0      #store_ids
+    products_sheet['AS' + str(row_num)] = 1      #sort_order
+    products_sheet['AT' + str(row_num)] = 'true' #subtract
+    products_sheet['AU' + str(row_num)] = 1      #minimum
+
 
 if __name__ == '__main__':
 
@@ -358,6 +383,7 @@ if __name__ == '__main__':
         add_manufacturer(product, wb)
         add_category(product, wb)
         add_image(product, wb)
+        add_misc(product, wb)
 
     # Save to file
     wb.save(products_xlsx)
