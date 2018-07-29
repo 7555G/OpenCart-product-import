@@ -37,6 +37,20 @@ ATTRIBUTE = ['ΦΥΛΟ',
              'ΚΟΥΜΠΩΜΑ',
              'ΑΔΙΑΒΡΟΧΟ',
              'ΕΓΓΥΗΣΗ']
+DEFAULT_ATTR = ['n',
+                'o',
+                't',
+                'h',
+                'i',
+                'n',
+                'g',
+                ' ',
+                't',
+                'o',
+                ' ',
+                's',
+                'e',
+                'e']
 
 
 def open_new_products(input_file):
@@ -48,24 +62,25 @@ def open_new_products(input_file):
 
     for product in range(len(new_products)):
         for entry in range(len(new_products[product])):
-            new_products[product][entry] = new_products[product][entry].strip()
+            new_products[product][entry] = \
+                                        new_products[product][entry].strip()
 
     # Format data
     for product in range(len(new_products)):
         # Manufacturer
         new_products[product][MANUF_INDX] = \
-                new_products[product][MANUF_INDX].title()
+                                   new_products[product][MANUF_INDX].title()
         # Category
         new_products[product][CATEG_INDX] = \
-                new_products[product][CATEG_INDX].replace(' ', '')
+                          new_products[product][CATEG_INDX].replace(' ', '')
         new_products[product][CATEG_INDX] = \
-                new_products[product][CATEG_INDX].upper()
+                                   new_products[product][CATEG_INDX].upper()
         # Gender
         new_products[product][GENDER_INDX] = \
-                new_products[product][GENDER_INDX].lower()
+                                  new_products[product][GENDER_INDX].lower()
         # Price
         new_products[product][PRICE_INDX] = \
-                int(new_products[product][PRICE_INDX])
+                                      int(new_products[product][PRICE_INDX])
     
     return new_products
 
@@ -77,7 +92,7 @@ def load_categories():
 
 # XLSX modifier funcions
 def add_empty_product(wb):
-    products_sheet = wb.active
+    products_sheet = wb["Products"]
     products_sheet.append(['' for i in range(products_sheet.max_column)])
     row_num = products_sheet.max_row
    
@@ -91,7 +106,7 @@ def add_empty_product(wb):
 
 
 def add_product_name(product_info, wb):
-    products_sheet = wb.active
+    products_sheet = wb["Products"]
     row_num = products_sheet.max_row
 
     # Create product name
@@ -106,7 +121,7 @@ def add_product_name(product_info, wb):
     products_sheet['C' + str(row_num)] = product_name
 
 def add_description(product_info, wb):
-    products_sheet = wb.active
+    products_sheet = wb["Products"]
     row_num = products_sheet.max_row
 
     # Define gender
@@ -147,7 +162,7 @@ def add_description(product_info, wb):
 
 
 def add_SEO(product_info, wb):
-    products_sheet = wb.active
+    products_sheet = wb["Products"]
     row_num = products_sheet.max_row
 
     # Create SEO
@@ -162,7 +177,7 @@ def add_SEO(product_info, wb):
 
 
 def add_model(product_info, wb):
-    products_sheet = wb.active
+    products_sheet = wb["Products"]
     row_num = products_sheet.max_row
 
     # Get model
@@ -173,7 +188,7 @@ def add_model(product_info, wb):
 
 
 def add_meta_title(product_info, wb):
-    products_sheet = wb.active
+    products_sheet = wb["Products"]
     row_num = products_sheet.max_row
 
     # Define gender
@@ -253,7 +268,7 @@ def add_meta_title(product_info, wb):
 
 
 def add_price(product_info, wb):
-    products_sheet = wb.active
+    products_sheet = wb["Products"]
     row_num = products_sheet.max_row
 
     # Get price
@@ -264,9 +279,10 @@ def add_price(product_info, wb):
 
 
 def add_manufacturer(product_info, wb):
-    products_sheet = wb.active
+    products_sheet = wb["Products"]
     row_num = products_sheet.max_row
 
+    # Check manufacturer
     manuf = ''
     for correct_manuf in MANUFACTURER:
         if product_info[MANUF_INDX]== correct_manuf:
@@ -278,18 +294,28 @@ def add_manufacturer(product_info, wb):
     products_sheet['N' + str(row_num)] = manuf
 
 
+def add_category(product_info, wb):
+    products_sheet = wb["Products"]
+    row_num = products_sheet.max_row
+
+    # Find category number from dictionary
+    categ = categories_dict[product_info[CATEG_INDX]]
+    if categ == '':
+        print("Warning: invalid category!")
+
+    # Write category number
+    products_sheet['D' + str(row_num)] = categ
+
+
+def add_attributes(product_info, wb):
+    products_sheet = wb[""]
+    row_num = products_sheet.max_row
+
+
+
 if __name__ == '__main__':
 
-    if len(argv) < 3:
-        print('arg1: input_file, arg2: products.xlsx')
-        exit(1)
-
-    input_file = argv[1]
-    products_xlsx = argv[2]
-
-if __name__ == '__main__':
-
-    if len(argv) != 2:
+    if len(argv) != 3:
         print('arg1: input_file, arg2: products.xlsx')
         exit(1)
 
@@ -311,6 +337,7 @@ if __name__ == '__main__':
         add_meta_title(product, wb)
         add_price(product, wb)
         add_manufacturer(product, wb)
+        add_category(product, wb)
 
     # Save to file
     wb.save(products_xlsx)
