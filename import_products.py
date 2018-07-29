@@ -343,6 +343,7 @@ if __name__ == '__main__':
     wb = load_workbook(products_xlsx)
     new_products = open_new_products(input_file)
     categories_dict = load_categories()
+    # sanity check
     pprint(new_products)
 
     # Iterate the inputs
