@@ -37,20 +37,20 @@ ATTRIBUTE = ['ΦΥΛΟ',
              'ΚΟΥΜΠΩΜΑ',
              'ΑΔΙΑΒΡΟΧΟ',
              'ΕΓΓΥΗΣΗ']
-DEFAULT_ATTR = ['n',
-                'o',
-                't',
-                'h',
-                'i',
-                'n',
-                'g',
-                ' ',
-                't',
-                'o',
-                ' ',
-                's',
-                'e',
-                'e']
+DEFAULT_ATTR = [['n', 'τ'],
+                ['o', 'ι'],
+                ['t', 'ι'],
+                ['h', 'ι'],
+                ['i', 'ι'],
+                ['n', 'ι'],
+                ['g', 'ι'],
+                [' ', 'ι'],
+                ['t', 'ι'],
+                ['o', 'ι'],
+                [' ', 'ι'],
+                ['s', 'ι'],
+                ['e', 'ι'],
+                ['e', 'ι']]
 
 
 def open_new_products(input_file):
@@ -90,23 +90,34 @@ def load_categories():
     with open('categories.pkl', 'rb') as f:
         return pickle.load(f)
 
-# XLSX modifier funcions
+# XLSX modifier functions
 def add_empty_product(wb):
-    products_sheet = wb["Products"]
+    products_sheet = wb['Products']
+    attributes_sheet = wb['ProductAttributes']
     products_sheet.append(['' for i in range(products_sheet.max_column)])
     row_num = products_sheet.max_row
+    attr_row_num = attributes_sheet.max_row + 1
+    for i in range(len(ATTRIBUTE)):
+        attributes_sheet.append(['' \
+                              for j in range(attributes_sheet.max_column)])
    
     # Write the new product code
     last_product_id = products_sheet['A' + str(row_num - 1)].value
     curr_product_id = last_product_id + 1
     products_sheet['A' + str(row_num)] = curr_product_id
+    for i in range(len(ATTRIBUTE)):
+        attributes_sheet['C' + str(attr_row_num + i)] = ATTRIBUTE[i]
+        attributes_sheet['A' + str(attr_row_num + i)] = curr_product_id
+        attributes_sheet['B' + str(attr_row_num + i)] = ATTRIBUTE_GROUP
+        attributes_sheet['D' + str(attr_row_num + i)] = DEFAULT_ATTR[i][0]
+        attributes_sheet['E' + str(attr_row_num + i)] = DEFAULT_ATTR[i][1]
 
     print('Insert new product with ID ' + str(curr_product_id) \
           + ' in row ' + str(row_num) + '.')
 
 
 def add_product_name(product_info, wb):
-    products_sheet = wb["Products"]
+    products_sheet = wb['Products']
     row_num = products_sheet.max_row
 
     # Create product name
@@ -121,7 +132,7 @@ def add_product_name(product_info, wb):
     products_sheet['C' + str(row_num)] = product_name
 
 def add_description(product_info, wb):
-    products_sheet = wb["Products"]
+    products_sheet = wb['Products']
     row_num = products_sheet.max_row
 
     # Define gender
@@ -162,7 +173,7 @@ def add_description(product_info, wb):
 
 
 def add_SEO(product_info, wb):
-    products_sheet = wb["Products"]
+    products_sheet = wb['Products']
     row_num = products_sheet.max_row
 
     # Create SEO
@@ -177,7 +188,7 @@ def add_SEO(product_info, wb):
 
 
 def add_model(product_info, wb):
-    products_sheet = wb["Products"]
+    products_sheet = wb['Products']
     row_num = products_sheet.max_row
 
     # Get model
@@ -188,7 +199,7 @@ def add_model(product_info, wb):
 
 
 def add_meta_title(product_info, wb):
-    products_sheet = wb["Products"]
+    products_sheet = wb['Products']
     row_num = products_sheet.max_row
 
     # Define gender
@@ -249,7 +260,7 @@ def add_meta_title(product_info, wb):
     elif len(meta_title_el_s) <= 60:
         meta_title_el = meta_title_el_s
     else:
-        print("Warning: Greek meta title is longer than 60 characters!")
+        print('Warning: Greek meta title is longer than 60 characters!')
         meta_title_el = ''
 
     if len(meta_title_en_l) <= 60:
@@ -259,7 +270,7 @@ def add_meta_title(product_info, wb):
     elif len(meta_title_en_s) <= 60:
         meta_title_en = meta_title_en_s
     else:
-        print("Warning: English meta title is longer than 60 characters!")
+        print('Warning: English meta title is longer than 60 characters!')
         meta_title_en = ''
 
     # Wrte meta titles
@@ -268,7 +279,7 @@ def add_meta_title(product_info, wb):
 
 
 def add_price(product_info, wb):
-    products_sheet = wb["Products"]
+    products_sheet = wb['Products']
     row_num = products_sheet.max_row
 
     # Get price
@@ -279,7 +290,7 @@ def add_price(product_info, wb):
 
 
 def add_manufacturer(product_info, wb):
-    products_sheet = wb["Products"]
+    products_sheet = wb['Products']
     row_num = products_sheet.max_row
 
     # Check manufacturer
@@ -288,29 +299,36 @@ def add_manufacturer(product_info, wb):
         if product_info[MANUF_INDX]== correct_manuf:
             manuf = product_info[MANUF_INDX]
     if manuf == '':
-        print("Warning: invalid manufacturer name!")
+        print('Warning: invalid manufacturer name!')
 
     # Write manufacturer
     products_sheet['N' + str(row_num)] = manuf
 
 
 def add_category(product_info, wb):
-    products_sheet = wb["Products"]
+    products_sheet = wb['Products']
     row_num = products_sheet.max_row
 
     # Find category number from dictionary
     categ = categories_dict[product_info[CATEG_INDX]]
     if categ == '':
-        print("Warning: invalid category!")
+        print('Warning: invalid category!')
 
     # Write category number
     products_sheet['D' + str(row_num)] = categ
 
 
-def add_attributes(product_info, wb):
-    products_sheet = wb[""]
+def add_image(product_info, wb):
+    products_sheet = wb['Products']
     row_num = products_sheet.max_row
 
+    # Define image directory
+    model = product_info[MODEL_INDX]
+    categ_dir = product_info[CATEG_INDX].replace('>', '/')
+    image_dir = 'catalog/product/' + categ_dir + '/' + model + '.jpg'
+
+    # Write image directory
+    products_sheet['O' + str(row_num)] = image_dir
 
 
 if __name__ == '__main__':
@@ -338,6 +356,7 @@ if __name__ == '__main__':
         add_price(product, wb)
         add_manufacturer(product, wb)
         add_category(product, wb)
+        add_image(product, wb)
 
     # Save to file
     wb.save(products_xlsx)
