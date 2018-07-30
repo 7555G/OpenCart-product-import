@@ -83,6 +83,7 @@ def open_new_products(input_file):
     
     return new_products
 
+
 def load_categories():
     import pickle
 
