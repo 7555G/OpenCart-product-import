@@ -65,7 +65,7 @@ if __name__ == '__main__':
     specs_file = argv[3]
 
     spec = open_specs_file(specs_file)
-    wb = load_workbook(stock_xlsx)
+    wb = load_workbook(stock_xlsx, data_only=True)
     stock_sheet = wb.active
     rows = stock_sheet.max_row
     product_data =[[0 for x in range(len(spec))] \
