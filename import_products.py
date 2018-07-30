@@ -6,11 +6,6 @@ from openpyxl import Workbook, load_workbook
 from distance import levenshtein
 
 # Global Data
-<<<<<<< HEAD
-=======
-categories_dict = {}
-
->>>>>>> 76c86cbe50c21b0d9235012a65ddbc08f1a5876d
 MODEL_INDX  = 0
 MANUF_INDX  = 1
 CATEG_INDX  = 2
@@ -75,12 +70,8 @@ def open_new_products(input_file):
     
     return new_products
 
-<<<<<<< HEAD
 
-def load_categories():
-=======
 def load_pickle_obj(file):
->>>>>>> cec8cd5336cc4ab3e67608f68fb82939baf21c0d
     import pickle
 
     with open(file, 'rb') as f:
