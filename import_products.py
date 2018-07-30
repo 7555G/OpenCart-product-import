@@ -6,6 +6,11 @@ from openpyxl import Workbook, load_workbook
 from distance import levenshtein
 
 # Global Data
+<<<<<<< HEAD
+=======
+categories_dict = {}
+
+>>>>>>> 76c86cbe50c21b0d9235012a65ddbc08f1a5876d
 MODEL_INDX  = 0
 MANUF_INDX  = 1
 CATEG_INDX  = 2
