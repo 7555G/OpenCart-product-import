@@ -8,7 +8,7 @@ import pickle
 if __name__ == "__main__":
 
     if len(argv) < 1:
-        print("Need two args. 1: categories.xlsl")
+        print("arg1: categories.xlsl")
         exit()
 
     xlsx_file = argv[1]
@@ -40,5 +40,5 @@ if __name__ == "__main__":
 
     pprint(categories_dict)
 
-    with open("categories.pkl", 'wb') as f:
+    with open("../pkl_files/categories.pkl", 'wb') as f:
         pickle.dump(categories_dict, f)
