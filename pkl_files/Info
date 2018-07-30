@@ -1,0 +1,9 @@
+categories.pkl:     categories_dict
+
+    categories_dict:    {'WATCHES>RODANIA':5, ...}
+
+
+attributes.pkl:     (attr_names, attributes_dict)
+
+    attr_names:         {'GENDER':'ΦΥΛΟ', 'ΦΥΛΟ':'GENDER'}
+    attributes_dict :   {'ΡΟΛΟΓΙΑ':['ΦΥΛΟ','ΣΥΛΛΟΓΗ',...]}

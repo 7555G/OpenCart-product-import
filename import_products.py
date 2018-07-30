@@ -3,10 +3,14 @@
 from sys import argv
 from pprint import pprint
 from openpyxl import Workbook, load_workbook
+from distance import levenshtein
 
 # Global Data
+<<<<<<< HEAD
+=======
 categories_dict = {}
 
+>>>>>>> 76c86cbe50c21b0d9235012a65ddbc08f1a5876d
 MODEL_INDX  = 0
 MANUF_INDX  = 1
 CATEG_INDX  = 2
@@ -14,7 +18,7 @@ COLLEC_INDX = 3
 FAMILY_INDX = 4
 GENDER_INDX = 5
 PRICE_INDX  = 6
-ATTRIBUTE_GROUP = 'ΡΟΛΟΓΙΑ'
+
 MANUFACTURER = ['Chronoswiss',
                 'Fortis',
                 'Jos Von Arx',
@@ -22,20 +26,7 @@ MANUFACTURER = ['Chronoswiss',
                 'Manfred Cracco',
                 'Rodania',
                 'Victorinox']
-ATTRIBUTE = ['ΦΥΛΟ',
-             'ΣΥΛΛΟΓΗ',
-             'ΜΗΧΑΝΙΣΜΟΣ',
-             'ΛΕΙΤΟΥΡΓΙΕΣ',
-             'ΚΑΣΑ',
-             'ΔΙΑΜΜΕΤΡΟΣ ΚΑΣΑΣ',
-             'ΠΑΧΟΣ ΚΑΣΑΣ',
-             'ΚΡΥΣΤΑΛΛΟ',
-             'ΚΑΠΑΚΙ',
-             'ΣΤΕΦΑΝΗ',
-             'ΥΛΙΚΟ ΔΕΣΙΜΑΤΟΣ',
-             'ΚΟΥΜΠΩΜΑ',
-             'ΑΔΙΑΒΡΟΧΟ',
-             'ΕΓΓΥΗΣΗ']
+
 DEFAULT_ATTR = [['n', 'τ'],
                 ['o', 'ι'],
                 ['t', 'ι'],
@@ -48,6 +39,7 @@ DEFAULT_ATTR = [['n', 'τ'],
                 ['o', 'ι'],
                 [' ', 'ι'],
                 ['s', 'ι'],
+                ['e', 'ι'],
                 ['e', 'ι'],
                 ['e', 'ι']]
 
@@ -83,21 +75,52 @@ def open_new_products(input_file):
     
     return new_products
 
+<<<<<<< HEAD
 
 def load_categories():
+=======
+def load_pickle_obj(file):
+>>>>>>> cec8cd5336cc4ab3e67608f68fb82939baf21c0d
     import pickle
 
-    with open('categories.pkl', 'rb') as f:
+    with open(file, 'rb') as f:
         return pickle.load(f)
 
+def replace_chars(chars_string, the_string):
+    for char in chars_string:
+        the_string = the_string.replace(char, "")
+
+    return the_string
+
+def closest_match(string, strings_container):
+    
+    smallest_dist = 100
+    closest_match = ""
+    for match_candidate in strings_container:
+    
+        new_dist = levenshtein(replace_chars(" >/-._", string).lower(), \
+                               replace_chars(" >/-._", match_candidate).lower())    
+        if new_dist < smallest_dist:
+            smallest_dist = new_dist
+            closest_match = match_candidate
+
+    return closest_match
+
+
 # XLSX modifier functions
-def add_empty_product(wb):
+def add_empty_product(product_info, wb):
     products_sheet = wb['Products']
     attributes_sheet = wb['ProductAttributes']
     products_sheet.append(['' for i in range(products_sheet.max_column)])
     row_num = products_sheet.max_row
     attr_row_num = attributes_sheet.max_row + 1
-    for i in range(len(ATTRIBUTE)):
+
+    (categories_to_attribute, attributes_dict) = load_pickle_obj('pkl_files/attributes.pkl')
+    
+    attr_grp = categories_to_attribute[product_info[CATEG_INDX]]
+    attributes = attributes_dict[attr_grp]
+    
+    for i in range(len(attributes)):
         attributes_sheet.append(['' \
                               for j in range(attributes_sheet.max_column)])
    
@@ -105,10 +128,10 @@ def add_empty_product(wb):
     last_product_id = products_sheet['A' + str(row_num - 1)].value
     curr_product_id = last_product_id + 1
     products_sheet['A' + str(row_num)] = curr_product_id
-    for i in range(len(ATTRIBUTE)):
-        attributes_sheet['C' + str(attr_row_num + i)] = ATTRIBUTE[i]
+    for i in range(len(attributes)):
+        attributes_sheet['C' + str(attr_row_num + i)] = attributes[i]
         attributes_sheet['A' + str(attr_row_num + i)] = curr_product_id
-        attributes_sheet['B' + str(attr_row_num + i)] = ATTRIBUTE_GROUP
+        attributes_sheet['B' + str(attr_row_num + i)] = attr_grp
         attributes_sheet['D' + str(attr_row_num + i)] = DEFAULT_ATTR[i][0]
         attributes_sheet['E' + str(attr_row_num + i)] = DEFAULT_ATTR[i][1]
 
@@ -122,7 +145,7 @@ def add_product_name(product_info, wb):
 
     # Create product name
     product_name = product_info[MANUF_INDX]  + ' ' \
-                 + product_info[COLLEC_INDX]
+                 + product_info[COLLEC_INDX] + ' '
     if product_info[FAMILY_INDX] != '':
         product_name += product_info[FAMILY_INDX] + ' '
     product_name += product_info[MODEL_INDX]
@@ -130,6 +153,7 @@ def add_product_name(product_info, wb):
     # Write product name
     products_sheet['B' + str(row_num)] = product_name
     products_sheet['C' + str(row_num)] = product_name
+
 
 def add_description(product_info, wb):
     products_sheet = wb['Products']
@@ -308,14 +332,13 @@ def add_manufacturer(product_info, wb):
 def add_category(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
+    categories_dict = load_pickle_obj('pkl_files/categories.pkl')
 
     # Find category number from dictionary
-    categ = categories_dict[product_info[CATEG_INDX]]
-    if categ == '':
-        print('Warning: invalid category!')
+    categ = closest_match(product_info[CATEG_INDX], categories_dict)
 
     # Write category number
-    products_sheet['D' + str(row_num)] = categ
+    products_sheet['D' + str(row_num)] = categories_dict[categ]
 
 
 def add_image(product_info, wb):
@@ -329,6 +352,7 @@ def add_image(product_info, wb):
 
     # Write image directory
     products_sheet['O' + str(row_num)] = image_dir
+
 
 def add_misc(product_info, wb):
     products_sheet = wb['Products']
@@ -367,13 +391,10 @@ if __name__ == '__main__':
 
     wb = load_workbook(products_xlsx)
     new_products = open_new_products(input_file)
-    categories_dict = load_categories()
-    # sanity check
-    pprint(new_products)
 
     # Iterate the inputs
     for product in new_products:
-        add_empty_product(wb)
+        add_empty_product(product, wb)
         add_product_name(product, wb)
         add_description(product, wb)
         add_SEO(product, wb)
