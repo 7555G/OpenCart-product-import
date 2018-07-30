@@ -5,7 +5,6 @@ from pprint import pprint
 from openpyxl import Workbook, load_workbook
 
 # Global Data
-products_xlsx = ''
 categories_dict = {}
 
 MODEL_INDX  = 0
