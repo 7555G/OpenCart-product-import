@@ -49,7 +49,7 @@ def find_attr_from_category(category):
 if __name__ == "__main__":
 
     if len(argv) < 1:
-        print("arg1: categories.xlsl")
+        print("arg1: attributes.xlsl")
         exit()
 
     xlsx_file = argv[1]

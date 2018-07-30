@@ -1,9 +1,0 @@
-image_checker: args. 1: xlsx file 2: photos dir
-    Given an xlsx file it check the photos dir and finds the matching image files
-    for passwords from the xslx
-
-image_organizer:    1: xlsx file 2: photos search dir 3: output dir
-    Same as before, but also puts the image file to the output dir
-
-products.in:
-    Model_Num, Manufacturer, Category, Collection, Family, Gender
