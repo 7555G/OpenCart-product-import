@@ -1,0 +1,2 @@
+MANUFACTURER,  CASE, TEST, HELLO
+-Rodania,      P,       C,    -2 years

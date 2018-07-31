@@ -46,12 +46,12 @@ def is_column(string):
         return 0
 
 def get_data(stock_sheet, product_data, row, spec_dict):
-    for item in spec_dict:
-        if is_column(spec_dict[item]):
-            product_data[row][spec_order[item]] = \
-                         stock_sheet[spec_dict[item] + str(row)].value
+    for element in spec_dict:
+        if is_column(spec_dict[element]):
+            product_data[row][spec_order[element]] = \
+                         stock_sheet[spec_dict[element] + str(row)].value
         else:
-            product_data[row][spec_order[item]] = spec_dict[item][1:]
+            product_data[row][spec_order[element]] = spec_dict[element][1:]
 
 
 if __name__ == '__main__':
