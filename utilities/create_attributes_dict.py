@@ -39,7 +39,7 @@ def closest_match(string, strings_container):
     return closest_match
 
 def find_attr_from_category(category):
-    (attributes_names, attributes_dict) = load_attributes('../pkl_files/attributes.pkl')
+    (__, attributes_names, attributes_dict) = load_attributes('../pkl_files/attributes.pkl')
 
     # Convert the greek attribute groups to english
     attributes = [attributes_names[attr] for attr in attributes_dict]    
@@ -123,7 +123,7 @@ if __name__ == "__main__":
     # pprint(attributes_dict)
 
     # We will hand craft a dictionary that has the matchup between categories and attr groups
-    categories_dict = load_categories('pkl_files/categories.pkl')
+    categories_dict = load_categories('../pkl_files/categories.pkl')
     # print("categories_to_attributes = {")
     # for categ in categories_dict:
     #     print("\t'" + categ + "': '" + find_attr_from_category(categ) + "',")
@@ -137,6 +137,7 @@ if __name__ == "__main__":
 
     # Based from the output of the commented commands we have something like this
     # categories_to_attributes = {}
+    pprint(attributes_dict)
 
-    with open("pkl_files/attributes.pkl", 'wb') as f:
-        pickle.dump((categories_to_attributes, attributes_dict), f)
+    with open("../pkl_files/attributes.pkl", 'wb') as f:
+        pickle.dump((categories_to_attributes,attr_names, attributes_dict), f)
