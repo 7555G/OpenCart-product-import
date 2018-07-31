@@ -6,6 +6,7 @@ from openpyxl import Workbook, load_workbook
 import csv
 
 
+# Data moving functions
 def open_attrs_file(file_path):
     attr_list = open(file_path)
     attr_list = [line.replace('\n','') for line in attr_list]
@@ -24,10 +25,8 @@ def open_attrs_file(file_path):
 
     return attr_dict
 
-
 def write_data_file(file_path, data):
     file = open(file_path)
-
 
 def is_column(string):
     if string[0] != '-':
@@ -39,7 +38,7 @@ def get_data(stock_sheet, product_data, row, attr_dict):
     for item in attr_dict:
         if is_column(attr_dict[item]):
             product_data[row][item] = \
-                         stock_sheet[attr_dict[item] + str(row+1)].value
+                         stock_sheet[attr_dict[item] + str(row+2)].value
         else:
             product_data[row][item] = attr_dict[item][1:]
 

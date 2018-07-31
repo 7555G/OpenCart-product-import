@@ -49,7 +49,7 @@ def get_data(stock_sheet, product_data, row, spec_dict):
     for element in spec_dict:
         if is_column(spec_dict[element]):
             product_data[row][spec_order[element]] = \
-                         stock_sheet[spec_dict[element] + str(row)].value
+                         stock_sheet[spec_dict[element] + str(row+2)].value
         else:
             product_data[row][spec_order[element]] = spec_dict[element][1:]
 
@@ -72,9 +72,9 @@ if __name__ == '__main__':
                       for y in range(rows)] 
 
     # Collect the data from the spreadsheet to a variable
-    for row in range(1, rows):
+    for row in range(rows):
         get_data(stock_sheet, product_data, row, spec)
-    
+
     # Write data to file
     myfile = open(data_in, 'w')
     writer = csv.writer(myfile, dialect='excel', lineterminator='\n')

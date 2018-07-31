@@ -1,2 +1,2 @@
-MANUFACTURER,  CASE, TEST, HELLO
--Rodania,      P,       C,    -2 years
+ΚΑΣΑ, ΕΓΓΥΗΣΗ 
+C,    -2 years

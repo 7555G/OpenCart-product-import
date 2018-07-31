@@ -4,6 +4,7 @@ from sys import argv
 from pprint import pprint
 from openpyxl import Workbook, load_workbook
 from distance import levenshtein
+from transformations import COLUMN_TRANSF_RULES
 
 # Global Data
 MODEL_INDX  = 0
@@ -21,23 +22,46 @@ MANUFACTURER = ['Chronoswiss',
                 'Manfred Cracco',
                 'Rodania',
                 'Victorinox']
+# COLUMN_TRANSF_RULES = {}    # { 'ΚΑΣΑ': {'S.STEEL':'Ατσαλι'}}
 
-DEFAULT_ATTR = [['n', 'τ'],
-                ['o', 'ι'],
-                ['t', 'ι'],
-                ['h', 'ι'],
-                ['i', 'ι'],
-                ['n', 'ι'],
-                ['g', 'ι'],
-                [' ', 'ι'],
-                ['t', 'ι'],
-                ['o', 'ι'],
-                [' ', 'ι'],
-                ['s', 'ι'],
-                ['e', 'ι'],
-                ['e', 'ι'],
-                ['e', 'ι']]
 
+def process_attr_data(product, attr_grp):
+    
+    for attr in COLUMN_TRANSF_RULES[attr_grp]:
+        # First create the list(of lists) based on the priorities
+        transformations_ordered = [[] for i in range(len(COLUMN_TRANSF_RULES[attr_grp][attr]))]
+        for word, transf in COLUMN_TRANSF_RULES[attr_grp][attr].items():
+            transformations_ordered[transf[-1]].append(word)
+            # [ ['STEEL','S.S'], ['Ceramic'], ... ]
+            
+        # Clean empty lists
+        transformations_ordered = [lst for lst in transformations_ordered if lst]
+
+        # Do the transformation for the selected attribute for each product
+        
+        # Watch out for no data
+        if not product[attr]:
+            continue
+
+        new_val_el = ""
+        new_val_en = ""
+        for transf in transformations_ordered:
+            possible_words = [word for word in transf]
+            # Now check if any of the words are in the text
+            for word in possible_words:
+                if word.upper() in product[attr].upper():
+                    new_val_en += ', ' + COLUMN_TRANSF_RULES[attr_grp][attr][word][0]
+                    new_val_el += ', ' + COLUMN_TRANSF_RULES[attr_grp][attr][word][1]
+                    break
+
+        if new_val_el == "":
+            product[attr] = [product[attr].capitalize(), product[attr].capitalize()]
+        else:
+            new_val_el = new_val_el[2:].capitalize()
+            new_val_en = new_val_en[2:].capitalize()
+            product[attr] = [new_val_el, new_val_en]
+
+    return product        
 
 def open_new_products(input_file):
     new_products = open(input_file)
@@ -66,10 +90,31 @@ def open_new_products(input_file):
                                   new_products[product][GENDER_INDX].lower()
         # Price
         new_products[product][PRICE_INDX] = \
-                                      int(new_products[product][PRICE_INDX])
+                                           new_products[product][PRICE_INDX]
+
+        # Family
+        new_products[product][FAMILY_INDX] = \
+                                  new_products[product][FAMILY_INDX].upper()
+
+        # Collection
+        new_products[product][COLLEC_INDX] = \
+                                  new_products[product][COLLEC_INDX].title()
+
     
     return new_products
 
+def open_product_attributes(input_file):
+    new_attrs = open(input_file)
+    new_attrs = [line.replace('\n','') for line in new_attrs] 
+    new_attrs = [line.split(',') for line in new_attrs]
+    attr_names = new_attrs.pop(0)
+
+    attrs_dicts = [{} for prod in new_attrs]
+    for prod_ind in range(len(new_attrs)):
+        for i in range(len(new_attrs[prod_ind])):
+            attrs_dicts[prod_ind][attr_names[i]] = new_attrs[prod_ind][i]
+    
+    return attrs_dicts
 
 def load_pickle_obj(file):
     import pickle
@@ -101,12 +146,26 @@ def closest_match(string, strings_container):
 # XLSX modifier functions
 def add_empty_product(product_info, wb):
     products_sheet = wb['Products']
-    attributes_sheet = wb['ProductAttributes']
+    # attributes_sheet = wb['ProductAttributes']
     products_sheet.append(['' for i in range(products_sheet.max_column)])
+    row_num = products_sheet.max_row
+
+    # Write the new product code
+    last_product_id = products_sheet['A' + str(row_num - 1)].value
+    curr_product_id = last_product_id + 1
+    products_sheet['A' + str(row_num)] = curr_product_id
+
+    print('Insert new product with ID ' + str(curr_product_id) \
+          + ' in row ' + str(row_num) + '.')
+
+
+def add_attributes(product_info, attribute_info, wb):
+    products_sheet = wb['Products']
+    attributes_sheet = wb['ProductAttributes']
     row_num = products_sheet.max_row
     attr_row_num = attributes_sheet.max_row + 1
 
-    (categories_to_attribute, attributes_dict) = load_pickle_obj('pkl_files/attributes.pkl')
+    (categories_to_attribute, __, attributes_dict) = load_pickle_obj('pkl_files/attributes.pkl')
     
     attr_grp = categories_to_attribute[product_info[CATEG_INDX]]
     attributes = attributes_dict[attr_grp]
@@ -114,20 +173,23 @@ def add_empty_product(product_info, wb):
     for i in range(len(attributes)):
         attributes_sheet.append(['' \
                               for j in range(attributes_sheet.max_column)])
-   
-    # Write the new product code
+
     last_product_id = products_sheet['A' + str(row_num - 1)].value
     curr_product_id = last_product_id + 1
-    products_sheet['A' + str(row_num)] = curr_product_id
-    for i in range(len(attributes)):
+
+    # The default values
+    attribute_info = process_attr_data(attribute_info, attr_grp)
+    for attr, i in zip(attributes, range(len(attributes))):
         attributes_sheet['C' + str(attr_row_num + i)] = attributes[i]
         attributes_sheet['A' + str(attr_row_num + i)] = curr_product_id
         attributes_sheet['B' + str(attr_row_num + i)] = attr_grp
-        attributes_sheet['D' + str(attr_row_num + i)] = DEFAULT_ATTR[i][0]
-        attributes_sheet['E' + str(attr_row_num + i)] = DEFAULT_ATTR[i][1]
 
-    print('Insert new product with ID ' + str(curr_product_id) \
-          + ' in row ' + str(row_num) + '.')
+        if attr in attribute_info:
+            attributes_sheet['D' + str(attr_row_num + i)] = attribute_info[attr][0]
+            attributes_sheet['E' + str(attr_row_num + i)] = attribute_info[attr][1]
+        else:
+            attributes_sheet['D' + str(attr_row_num + i)] = ''
+            attributes_sheet['E' + str(attr_row_num + i)] = ''
 
 
 def add_product_name(product_info, wb):
@@ -248,22 +310,22 @@ def add_meta_title(product_info, wb):
     
     # English
     if product_info[FAMILY_INDX] != '':
-        meta_title_en_m = gender_en + ' Watches - Swiss Made ' \
+        meta_title_en_m = gender_en + ' Watch - Swiss Made ' \
                         + product_info[MANUF_INDX]  + ' ' \
                         + product_info[FAMILY_INDX] + ' ' \
                         + product_info[MODEL_INDX]  + ' | Eurotimer'
-        meta_title_en_l = gender_en + ' Watches - Swiss Made ' \
+        meta_title_en_l = gender_en + ' Watch - Swiss Made ' \
                         + product_info[MANUF_INDX]  + ' ' \
                         + product_info[COLLEC_INDX] + ' ' \
                         + product_info[FAMILY_INDX] + ' ' \
                         + product_info[MODEL_INDX]  + ' | Eurotimer'
     else:
-        meta_title_en_m = gender_en + ' Watches - Swiss Made ' \
+        meta_title_en_m = gender_en + ' Watch - Swiss Made ' \
                         + product_info[MANUF_INDX]  + ' ' \
                         + product_info[COLLEC_INDX] + ' ' \
                         + product_info[MODEL_INDX]  + ' | Eurotimer'
         meta_title_en_l = meta_title_en_m
-    meta_title_en_s = gender_en + ' Watches - Swiss Made ' \
+    meta_title_en_s = gender_en + ' Watch - Swiss Made ' \
                     + product_info[MANUF_INDX] + ' ' \
                     + product_info[MODEL_INDX] + ' | Eurotimer'
 
@@ -373,19 +435,23 @@ def add_misc(product_info, wb):
 
 if __name__ == '__main__':
 
-    if len(argv) != 3:
-        print('arg1: input_file, arg2: products.xlsx')
+    if len(argv) < 3:
+        print('arg1: input_file, arg2: atts.in, arg3: products.xlsx')
         exit(1)
 
     input_file = argv[1]
-    products_xlsx = argv[2]
+    atts_in = argv[2]
+    products_xlsx = argv[3]
 
     wb = load_workbook(products_xlsx)
     new_products = open_new_products(input_file)
-
+    new_attributes = open_product_attributes(atts_in)
+    pprint(new_attributes)
+    
     # Iterate the inputs
-    for product in new_products:
+    for product, attributes in zip(new_products, new_attributes):
         add_empty_product(product, wb)
+        add_attributes(product, attributes, wb)
         add_product_name(product, wb)
         add_description(product, wb)
         add_SEO(product, wb)
