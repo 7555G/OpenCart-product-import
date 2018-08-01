@@ -1,4 +1,5 @@
-xlsx_files/*
+xlsx_files
 __pycache__
 *.in
+images
 product
