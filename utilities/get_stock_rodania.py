@@ -6,6 +6,7 @@ from openpyxl import Workbook, load_workbook
 import csv
 
 
+PRODUCTS = 67
 # Global variables
 spec_order = {'model'       : 0,
               'manufacturer': 1,
@@ -72,8 +73,10 @@ if __name__ == '__main__':
                       for y in range(rows)] 
 
     # Collect the data from the spreadsheet to a variable
-    for row in range(rows):
+    for row in range(PRODUCTS):
         get_data(stock_sheet, product_data, row, spec)
+        product_data[row][0] = int(product_data[row][0])
+        product_data[row][-1] = int(product_data[row][-1]) 
 
     # Write data to file
     myfile = open(data_in, 'w')

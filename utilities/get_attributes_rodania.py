@@ -5,7 +5,7 @@ from pprint import pprint
 from openpyxl import Workbook, load_workbook
 import csv
 
-
+PRODUCTS = 67
 # Data moving functions
 def open_attrs_file(file_path):
     attr_list = open(file_path)
@@ -57,10 +57,10 @@ if __name__ == '__main__':
     wb = load_workbook(stock_xlsx, data_only=True)
     stock_sheet = wb.active
     rows = stock_sheet.max_row
-    product_data =[{} for y in range(rows)] 
+    product_data =[{} for y in range(PRODUCTS)] 
 
     # Collect the data from the spreadsheet to a variable
-    for row in range(0, rows):
+    for row in range(PRODUCTS):
         get_data(stock_sheet, product_data, row, attr_dict)
     
     product_data_list = [product.values() for product in product_data] 

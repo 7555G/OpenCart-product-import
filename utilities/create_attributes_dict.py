@@ -122,13 +122,17 @@ if __name__ == "__main__":
 
     # pprint(attributes_dict)
 
+    categories_to_attributes = {}
+    with open("../pkl_files/attributes.pkl", 'wb') as f:
+        pickle.dump((categories_to_attributes,attr_names, attributes_dict), f)
+        
     # We will hand craft a dictionary that has the matchup between categories and attr groups
     categories_dict = load_categories('../pkl_files/categories.pkl')
     # print("categories_to_attributes = {")
     # for categ in categories_dict:
     #     print("\t'" + categ + "': '" + find_attr_from_category(categ) + "',")
     # print("\t}")
-    categories_to_attributes = {}
+    
     for categ in categories_dict:
         categories_to_attributes[categ]= find_attr_from_category(categ)
 

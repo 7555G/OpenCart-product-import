@@ -5,6 +5,7 @@ from pprint import pprint
 from openpyxl import Workbook, load_workbook
 from distance import levenshtein
 from transformations import COLUMN_TRANSF_RULES
+from color import get_color
 
 # Global Data
 MODEL_INDX  = 0
@@ -22,46 +23,96 @@ MANUFACTURER = ['Chronoswiss',
                 'Manfred Cracco',
                 'Rodania',
                 'Victorinox']
-# COLUMN_TRANSF_RULES = {}    # { 'ΚΑΣΑ': {'S.STEEL':'Ατσαλι'}}
 
+def cleanup(wb):
+    products_sheet = wb['Products']
+    products_sheet.append(['' for i in range(products_sheet.max_column)])
+    row_num = products_sheet.max_row
+
+    print("Row to clean is: ", row_num)
+    products_sheet.delete_rows(row_num)
 
 def process_attr_data(product, attr_grp):
     
     for attr in COLUMN_TRANSF_RULES[attr_grp]:
         # First create the list(of lists) based on the priorities
-        transformations_ordered = [[] for i in range(len(COLUMN_TRANSF_RULES[attr_grp][attr]))]
+        transformations_ordered = [[] for i in range(len(COLUMN_TRANSF_RULES[attr_grp][attr]) + 1000)] 
+        
         for word, transf in COLUMN_TRANSF_RULES[attr_grp][attr].items():
             transformations_ordered[transf[-1]].append(word)
             # [ ['STEEL','S.S'], ['Ceramic'], ... ]
             
         # Clean empty lists
         transformations_ordered = [lst for lst in transformations_ordered if lst]
-
-        # Do the transformation for the selected attribute for each product
-        
+        # if (attr == 'ΥΛΙΚΟ ΔΕΣΙΜΑΤΟΣ'):
+        #     pprint(transformations_ordered)
         # Watch out for no data
-        if not product[attr]:
-            continue
+        try:
+            if not product[attr]:
+                product[attr] = ""
+                continue
+        except:
+            product[attr] = ""
+
 
         new_val_el = ""
         new_val_en = ""
         for transf in transformations_ordered:
             possible_words = [word for word in transf]
+
+            max_word = ""
             # Now check if any of the words are in the text
             for word in possible_words:
-                if word.upper() in product[attr].upper():
-                    new_val_en += ', ' + COLUMN_TRANSF_RULES[attr_grp][attr][word][0]
-                    new_val_el += ', ' + COLUMN_TRANSF_RULES[attr_grp][attr][word][1]
-                    break
 
+                if "__color" in word:
+                    
+                    colors_vals = get_color(word.lower(), replace_chars("/|", product[attr].lower(), " "))
+                    if colors_vals:
+                        if len(word) > len(max_word):
+                            max_word = word
+
+                elif word.upper() in product[attr].upper():
+                    if len(word) > len(max_word):
+                        max_word = word
+
+            # If a word was matched, it will be the one with the most characters
+            if max_word:
+                new_val_en += ' ' + COLUMN_TRANSF_RULES[attr_grp][attr][max_word][0]
+                new_val_el += ' ' + COLUMN_TRANSF_RULES[attr_grp][attr][max_word][1]
+
+                # If the pattern matched we have the colors that need to be replaced
+                if "__color" in max_word:
+                    colors_vals = get_color(max_word.lower(), replace_chars("/|", product[attr].lower(), " "))
+                    new_val_el = new_val_el.replace("__color", colors_vals[1])
+                    new_val_en = new_val_en.replace("__color", colors_vals[0])
+        
         if new_val_el == "":
-            product[attr] = [product[attr].capitalize(), product[attr].capitalize()]
+            product[attr] = [product[attr], product[attr]]
         else:
-            new_val_el = new_val_el[2:].capitalize()
-            new_val_en = new_val_en[2:].capitalize()
+            new_val_el = new_val_el[1:][0].upper() + new_val_el[2:]
+            new_val_en = new_val_en[1:][0].upper() + new_val_en[2:]
+            if new_val_el[-1] == ',':
+                new_val_el = new_val_el[:-1]
+                new_val_en = new_val_en[:-1]
             product[attr] = [new_val_el, new_val_en]
 
+    # Lastly all attributes that weren't filtered, convert them to [greek, engl] format
+    for attr in product:
+        if not isinstance(product[attr], list):
+            product[attr] = [product[attr], product[attr]]
+
     return product        
+
+def static_processing(attribute_info, attr_grp):
+
+    # Apply rules to the data before inserting it
+    attribute_info['ΣΥΛΛΟΓΗ'] = attribute_info['ΣΥΛΛΟΓΗ'].title()
+    if attribute_info['ΔΙΑΜΕΤΡΟΣ ΚΑΣΑΣ'] != "":
+        attribute_info['ΔΙΑΜΕΤΡΟΣ ΚΑΣΑΣ'] = attribute_info['ΔΙΑΜΕΤΡΟΣ ΚΑΣΑΣ'] + "mm"
+    if attribute_info['ΠΑΧΟΣ ΚΑΣΑΣ'] != "":
+        attribute_info['ΠΑΧΟΣ ΚΑΣΑΣ'] = attribute_info['ΠΑΧΟΣ ΚΑΣΑΣ'] + "mm"
+
+    return attribute_info
 
 def open_new_products(input_file):
     new_products = open(input_file)
@@ -122,9 +173,9 @@ def load_pickle_obj(file):
     with open(file, 'rb') as f:
         return pickle.load(f)
 
-def replace_chars(chars_string, the_string):
+def replace_chars(chars_string, the_string, new_char=""):
     for char in chars_string:
-        the_string = the_string.replace(char, "")
+        the_string = the_string.replace(char, new_char)
 
     return the_string
 
@@ -146,7 +197,6 @@ def closest_match(string, strings_container):
 # XLSX modifier functions
 def add_empty_product(product_info, wb):
     products_sheet = wb['Products']
-    # attributes_sheet = wb['ProductAttributes']
     products_sheet.append(['' for i in range(products_sheet.max_column)])
     row_num = products_sheet.max_row
 
@@ -155,8 +205,8 @@ def add_empty_product(product_info, wb):
     curr_product_id = last_product_id + 1
     products_sheet['A' + str(row_num)] = curr_product_id
 
-    print('Insert new product with ID ' + str(curr_product_id) \
-          + ' in row ' + str(row_num) + '.')
+    print("Insert new product with ID {} in row {} with Model: {}".format( \
+        curr_product_id, row_num, product_info[MODEL_INDX]))
 
 
 def add_attributes(product_info, attribute_info, wb):
@@ -169,18 +219,22 @@ def add_attributes(product_info, attribute_info, wb):
     
     attr_grp = categories_to_attribute[product_info[CATEG_INDX]]
     attributes = attributes_dict[attr_grp]
-    
-    for i in range(len(attributes)):
-        attributes_sheet.append(['' \
-                              for j in range(attributes_sheet.max_column)])
 
     last_product_id = products_sheet['A' + str(row_num - 1)].value
     curr_product_id = last_product_id + 1
 
     # The default values
+    attribute_info = static_processing(attribute_info, attr_grp)
     attribute_info = process_attr_data(attribute_info, attr_grp)
-    for attr, i in zip(attributes, range(len(attributes))):
-        attributes_sheet['C' + str(attr_row_num + i)] = attributes[i]
+    # pprint(attribute_info['ΥΛΙΚΟ ΔΕΣΙΜΑΤΟΣ'])
+    i = 0
+    for attr in attributes:
+        # If attribute is empty, don't insert the row
+        if attr not in attribute_info or attribute_info[attr][0] == "":
+            continue
+        attributes_sheet.append(['' for j in range(attributes_sheet.max_column)])
+        
+        attributes_sheet['C' + str(attr_row_num + i)] = attr
         attributes_sheet['A' + str(attr_row_num + i)] = curr_product_id
         attributes_sheet['B' + str(attr_row_num + i)] = attr_grp
 
@@ -190,6 +244,7 @@ def add_attributes(product_info, attribute_info, wb):
         else:
             attributes_sheet['D' + str(attr_row_num + i)] = ''
             attributes_sheet['E' + str(attr_row_num + i)] = ''
+        i += 1
 
 
 def add_product_name(product_info, wb):
@@ -390,8 +445,17 @@ def add_category(product_info, wb):
     # Find category number from dictionary
     categ = closest_match(product_info[CATEG_INDX], categories_dict)
 
+    # Also add the parent categories
+    broken_category = categ.split(">")
+    parent_categ = broken_category[0]
+    categ_val = str(categories_dict[parent_categ])
+    for i in range(1, len(broken_category)):
+        parent_categ = parent_categ + '>' + broken_category[i]
+        categ_val += "," + str( categories_dict[parent_categ] )
+
+
     # Write category number
-    products_sheet['D' + str(row_num)] = categories_dict[categ]
+    products_sheet['D' + str(row_num)] = categ_val
 
 
 def add_image(product_info, wb):
@@ -446,7 +510,6 @@ if __name__ == '__main__':
     wb = load_workbook(products_xlsx)
     new_products = open_new_products(input_file)
     new_attributes = open_product_attributes(atts_in)
-    pprint(new_attributes)
     
     # Iterate the inputs
     for product, attributes in zip(new_products, new_attributes):
@@ -463,5 +526,6 @@ if __name__ == '__main__':
         add_image(product, wb)
         add_misc(product, wb)
 
-    # Save to file
+    # Cleanup and Save to file
+    cleanup(wb)
     wb.save(products_xlsx)
