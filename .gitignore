@@ -1,6 +1,7 @@
 xlsx_files
 __pycache__
 *.in
+*.log
 images
 product
 input
