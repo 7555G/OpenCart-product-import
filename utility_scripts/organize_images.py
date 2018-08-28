@@ -8,7 +8,7 @@ if __name__ == "__main__":
     from shutil import copyfile
 
     if len(argv) < 3:
-        print("Need 3 args. 1: xlsx file 2: photos search dir 3: output dir")
+        print("Need 3 args. 1: xlsx file, 2: photos search dir, 3: output dir")
         exit()
 
     xlsx_file = argv[1]

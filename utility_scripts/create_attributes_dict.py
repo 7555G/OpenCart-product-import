@@ -48,7 +48,7 @@ def find_attr_from_category(category):
 
 if __name__ == "__main__":
 
-    if len(argv) < 1:
+    if len(argv) < 2:
         print("arg1: attributes.xlsl")
         exit()
 

@@ -54,7 +54,7 @@ def get_ids(xlsx_file, column=0):
 
 if __name__ == "__main__":
 
-    if len(argv) < 2:
+    if len(argv) < 3:
         print("Need two args. 1: xlsx file 2: photos dir")
         exit()
 
