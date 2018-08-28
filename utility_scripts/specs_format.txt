@@ -1,0 +1,2 @@
+model, manufacturer, category,        collection, family, gender, price
+A,     -Rodania,    -WATCHES>RODANIA, C,          D,      B,      Q
