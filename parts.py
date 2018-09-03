@@ -514,7 +514,7 @@ def add_misc(product_info, wb):
 
 if __name__ == '__main__':
 
-    if len(argv) < 4:
+    if len(argv) < 3:
         print('arg1: specs.csv | arg2: attrs.csv | arg3: products.xlsx')
         exit(1)
 

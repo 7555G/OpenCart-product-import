@@ -153,9 +153,9 @@ if __name__ == "__main__":
     # login to site
     site_login(argv[1])
 
-    for i in range(2, 2 + 5):
+    for i in range(2, nrow + 1):
         # show progress
-        print("item: " + str(i - 2) + "/" + str(5), end="\r")
+        print("item: " + str(i - 2) + "/" + str(nrow + 1), end="\r")
 
         part_code = ws.cell(row = i, column = col["part code"]).value
 

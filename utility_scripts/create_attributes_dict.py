@@ -3,7 +3,6 @@
 from openpyxl import Workbook, load_workbook
 from pprint import pprint
 from sys import argv
-import pickle
 from distance import levenshtein
 
 def load_categories(file):
@@ -124,7 +123,7 @@ if __name__ == "__main__":
 
     categories_to_attributes = {}
     with open("../pkl_files/attributes.pkl", 'wb') as f:
-        pickle.dump((categories_to_attributes,attr_names, attributes_dict), f)
+        pickle.dump((categories_to_attributes, attr_names, attributes_dict), f)
         
     # We will hand craft a dictionary that has the matchup between categories and attr groups
     categories_dict = load_categories('../pkl_files/categories.pkl')
@@ -144,4 +143,4 @@ if __name__ == "__main__":
     pprint(attributes_dict)
 
     with open("../pkl_files/attributes.pkl", 'wb') as f:
-        pickle.dump((categories_to_attributes,attr_names, attributes_dict), f)
+        pickle.dump((categories_to_attributes, attr_names, attributes_dict), f)
