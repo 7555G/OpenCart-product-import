@@ -20,7 +20,6 @@ if __name__ == "__main__":
     col = {}
     for i in range(1,ncol + 1):
         col[ws.cell(row = 1, column = i).value.lower()] = i
-    pprint(col)
 
     data_to_type        = {}
     data_to_subcategory = {}
