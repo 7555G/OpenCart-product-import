@@ -8,23 +8,7 @@ from libs.transformations import COLUMN_TRANSF_RULES
 from libs.color import get_color
 from libs.utilities import *
 
-# Global Data
-MODEL_INDX  = 0
-MANUF_INDX  = 1
-CATEG_INDX  = 2
-COLLEC_INDX = 3
-FAMILY_INDX = 4
-GENDER_INDX = 5
-PRICE_INDX  = 6
-QUANT_INDX  = 7
-
-MANUFACTURER = ['Chronoswiss',
-                'Fortis',
-                'Jos Von Arx',
-                'Jowissa',
-                'Manfred Cracco',
-                'Rodania',
-                'Victorinox']
+MANUFACTURER = "Maurice Lacroix"
 
 def cleanup(wb):
     products_sheet = wb['Products']
@@ -34,8 +18,8 @@ def cleanup(wb):
     # print("Row to clean is: ", row_num)
     products_sheet.delete_rows(row_num)
 
+
 def process_attr_data(product, attr_grp):
-    
     for attr in COLUMN_TRANSF_RULES[attr_grp]:
         # First create the list(of lists) based on the priorities
         transformations_ordered = [[] for i in range(len(COLUMN_TRANSF_RULES[attr_grp][attr]) + 1000)] 
@@ -105,8 +89,8 @@ def process_attr_data(product, attr_grp):
 
     return product        
 
-def static_pre_processing(product_info, attribute_info, attr_grp):
 
+def static_pre_processing(product_info, attribute_info, attr_grp):
     # Apply rules to the data before inserting it
     attribute_info['ΣΥΛΛΟΓΗ'] = product_info[COLLEC_INDX] + ' ' + product_info[FAMILY_INDX]
     if attribute_info['ΔΙΑΜΕΤΡΟΣ ΚΑΣΑΣ'] != "":
@@ -116,8 +100,8 @@ def static_pre_processing(product_info, attribute_info, attr_grp):
 
     return attribute_info
 
-def static_post_processing(product_info, attribute_info, attr_grp):
 
+def static_post_processing(product_info, attribute_info, attr_grp):
     # ΔΕΣΙΜΟ
     if attribute_info['ΔΕΣΙΜΟ'] == ["",""]:
         return attribute_info
@@ -147,6 +131,7 @@ def static_post_processing(product_info, attribute_info, attr_grp):
     attribute_info['ΚΑΣΑ'][1] = rmcomma(attribute_info['ΚΑΣΑ'][1], " and", 2)
 
     return attribute_info
+
 
 def open_new_products(input_file):
     new_products = open(input_file)
@@ -185,21 +170,8 @@ def open_new_products(input_file):
         new_products[product][COLLEC_INDX] = \
                                   new_products[product][COLLEC_INDX].title()
 
-    
     return new_products
 
-def open_product_attributes(input_file):
-    new_attrs = open(input_file)
-    new_attrs = [line.replace('\n','') for line in new_attrs] 
-    new_attrs = [line.split(',') for line in new_attrs]
-    attr_names = new_attrs.pop(0)
-
-    attrs_dicts = [{} for prod in new_attrs]
-    for prod_ind in range(len(new_attrs)):
-        for i in range(len(new_attrs[prod_ind])):
-            attrs_dicts[prod_ind][attr_names[i]] = new_attrs[prod_ind][i]
-    
-    return attrs_dicts
 
 def load_pickle_obj(file):
     import pickle
@@ -223,7 +195,7 @@ def add_empty_product(product_info, wb):
         curr_product_id, row_num, product_info[MODEL_INDX]))
 
 
-def add_attributes(product_info, attribute_info, wb):
+def add_attributes(product_info, wb):
     products_sheet = wb['Products']
     attributes_sheet = wb['ProductAttributes']
     row_num = products_sheet.max_row
@@ -231,17 +203,17 @@ def add_attributes(product_info, attribute_info, wb):
 
     (categories_to_attribute, __, attributes_dict) = load_pickle_obj('pkl_files/attributes.pkl')
     
-    attr_grp = categories_to_attribute[product_info[CATEG_INDX]]
+    attr_grp = categories_to_attribute["WATCH PARTS"]
     attributes = attributes_dict[attr_grp]
 
     last_product_id = products_sheet['A' + str(row_num - 1)].value
     curr_product_id = last_product_id + 1
 
     # Data Processing
-    attribute_info = static_pre_processing(product_info, attribute_info, attr_grp)
-    attribute_info = process_attr_data(attribute_info, attr_grp)
-    attribute_info = static_post_processing(product_info, attribute_info, attr_grp)
-    # pprint(attribute_info['ΥΛΙΚΟ ΔΕΣΙΜΑΤΟΣ'])
+##    attribute_info = static_pre_processing(product_info, attribute_info, attr_grp)
+##    attribute_info = process_attr_data(attribute_info, attr_grp)
+##    attribute_info = static_post_processing(product_info, attribute_info, attr_grp)
+    #pprint(attribute_info['ΥΛΙΚΟ ΔΕΣΙΜΑΤΟΣ'])
     i = 0
     for attr in attributes:
         # If attribute is empty, don't insert the row
@@ -514,23 +486,21 @@ def add_misc(product_info, wb):
 
 if __name__ == '__main__':
 
-    if len(argv) < 3:
-        print('arg1: specs.csv | arg2: attrs.csv | arg3: products.xlsx')
+    if len(argv) < 2:
+        print('arg1: specs.csv | arg2: products.xlsx')
         exit(1)
 
     SPECS_CSV = argv[1]
-    ATTRS_CSV = argv[2]
-    products_xlsx = argv[3]
+    products_xlsx = argv[2]
 
     wb = load_workbook(products_xlsx)
     new_products = open_new_products(SPECS_CSV)
-    new_attributes = open_product_attributes(ATTRS_CSV)
     products = 0
     
     # Iterate the inputs
-    for product, attributes in zip(new_products, new_attributes):
+    for product in new_products:
         add_empty_product(product, wb)
-        add_attributes(product, attributes, wb)
+        add_attributes(product, wb)
         add_product_name(product, wb)
         add_description(product, wb)
         add_SEO(product, wb)
