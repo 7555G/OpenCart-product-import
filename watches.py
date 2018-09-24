@@ -17,6 +17,7 @@ FAMILY_INDX = 4
 GENDER_INDX = 5
 PRICE_INDX  = 6
 QUANT_INDX  = 7
+HIDDN_INDX  = 8
 
 MANUFACTURER = ['Chronoswiss',
                 'Fortis',
@@ -222,7 +223,6 @@ def add_empty_product(product_info, wb):
     print("Insert new product with ID {} in row {} with Model: {}".format( \
         curr_product_id, row_num, product_info[MODEL_INDX]))
 
-
 def add_attributes(product_info, attribute_info, wb):
     products_sheet = wb['Products']
     attributes_sheet = wb['ProductAttributes']
@@ -261,7 +261,6 @@ def add_attributes(product_info, attribute_info, wb):
             attributes_sheet['E' + str(attr_row_num + i)] = ''
         i += 1
 
-
 def add_product_name(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
@@ -276,7 +275,6 @@ def add_product_name(product_info, wb):
     # Write product name
     products_sheet['B' + str(row_num)] = product_name
     products_sheet['C' + str(row_num)] = product_name
-
 
 def add_description(product_info, wb):
     products_sheet = wb['Products']
@@ -318,7 +316,6 @@ def add_description(product_info, wb):
     products_sheet['AI' + str(row_num)] = descr_el
     products_sheet['AJ' + str(row_num)] = descr_en
 
-
 def add_SEO(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
@@ -333,7 +330,6 @@ def add_SEO(product_info, wb):
     # Write SEO
     products_sheet['AD' + str(row_num)] = SEO
 
-
 def add_model(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
@@ -343,7 +339,6 @@ def add_model(product_info, wb):
 
     # Write model
     products_sheet['M' + str(row_num)] = model
-
 
 def add_meta_title(product_info, wb):
     products_sheet = wb['Products']
@@ -424,7 +419,6 @@ def add_meta_title(product_info, wb):
     products_sheet['AG' + str(row_num)] = meta_title_el
     products_sheet['AH' + str(row_num)] = meta_title_en
 
-
 def add_price(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
@@ -434,7 +428,6 @@ def add_price(product_info, wb):
 
     # Write price
     products_sheet['Q' + str(row_num)] = price
-
 
 def add_manufacturer(product_info, wb):
     products_sheet = wb['Products']
@@ -450,7 +443,6 @@ def add_manufacturer(product_info, wb):
 
     # Write manufacturer
     products_sheet['N' + str(row_num)] = manuf
-
 
 def add_category(product_info, wb):
     products_sheet = wb['Products']
@@ -472,6 +464,20 @@ def add_category(product_info, wb):
     # Write category number
     products_sheet['D' + str(row_num)] = categ_val
 
+def add_status(product_info, wd):
+    products_sheet = wb['Products']
+    row_num = products_sheet.max_row
+
+    not_hidden = True
+    try:
+        not_hidden = not product_info[HIDDN_INDX]
+    except IndexError:
+        not_hidden = True
+
+    if not_hidden:
+        products_sheet['AB' + str(row_num)] = 'true'
+    else:
+        products_sheet['AB' + str(row_num)] = 'false'
 
 def add_image(product_info, wb):
     products_sheet = wb['Products']
@@ -485,12 +491,10 @@ def add_image(product_info, wb):
     # Write image directory
     products_sheet['O' + str(row_num)] = image_dir
 
-
 def add_misc(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
 
-    
     products_sheet['L'  + str(row_num)] = product_info[QUANT_INDX]      #quantity
     products_sheet['P'  + str(row_num)] = 'yes'  #shipping
     products_sheet['R'  + str(row_num)] = 0      #points
@@ -503,7 +507,6 @@ def add_misc(product_info, wb):
     products_sheet['Y'  + str(row_num)] = 0      #width
     products_sheet['Z'  + str(row_num)] = 0      #height
     products_sheet['AA' + str(row_num)] = 'cm'   #length_unit
-    products_sheet['AB' + str(row_num)] = 'true' #status
     products_sheet['AC' + str(row_num)] = 0      #tax_class_id
     products_sheet['AM' + str(row_num)] = 6      #stock_status_id
     products_sheet['AN' + str(row_num)] = 0      #store_ids
@@ -540,6 +543,7 @@ if __name__ == '__main__':
         add_manufacturer(product, wb)
         add_category(product, wb)
         add_image(product, wb)
+        add_status(product, wb)
         add_misc(product, wb)
         products += 1
 

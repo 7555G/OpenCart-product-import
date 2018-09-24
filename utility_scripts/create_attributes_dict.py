@@ -4,10 +4,9 @@ from openpyxl import Workbook, load_workbook
 from pprint import pprint
 from sys import argv
 from distance import levenshtein
+import pickle
 
 def load_categories(file):
-    import pickle
-
     with open(file, 'rb') as f:
         return pickle.load(f)
 

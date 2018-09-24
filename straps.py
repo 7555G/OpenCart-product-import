@@ -8,7 +8,10 @@ from libs.transformations import COLUMN_TRANSF_RULES
 from libs.color import get_color
 from libs.utilities import *
 
+# Maurice Laxroix Strap|Bracelet Color Material Info Number : Google
+# Maurice Laxroix Strap|Bracelet Color Material Buckle Info Number : Site 
 MANUFACTURER = "Maurice Lacroix"
+CATEGORY = "STRAPS>MAURICE LACROIX"
 
 
 def cleanup(wb):
@@ -44,37 +47,41 @@ def process_attr_data(product, attr_grp):
         for transf in transformations_ordered:
             possible_words = [word for word in transf]
 
-            max_word = ""
+            match_word = ""
             # Now check if any of the words are in the text
             for word in possible_words:
+                if word == "__*":
+                    match_word = word
+                    break
 
                 if "__color" in word:
-                    
                     colors_vals = get_color(word.lower(), replace_chars("/|", product[attr].lower(), " "))
                     if colors_vals:
-                        if len(word) > len(max_word):
-                            max_word = word
+                        match_word = word
+                        break
 
                 elif word.upper() in product[attr].upper():
-                    if len(word) > len(max_word):
-                        max_word = word
+                    match_word = word
+                    break
 
-            # If a word was matched, it will be the one with the most characters
-            if max_word:
-                new_val_en += ' ' + COLUMN_TRANSF_RULES[attr_grp][attr][max_word][0]
-                new_val_el += ' ' + COLUMN_TRANSF_RULES[attr_grp][attr][max_word][1]
+            # Match with the first word from the list
+            if match_word:
+                new_val_en += ' ' + COLUMN_TRANSF_RULES[attr_grp][attr][match_word][0]
+                new_val_el += ' ' + COLUMN_TRANSF_RULES[attr_grp][attr][match_word][1]
 
                 # If the pattern matched we have the colors that need to be replaced
-                if "__color" in max_word:
-                    colors_vals = get_color(max_word.lower(), replace_chars("/|", product[attr].lower(), " "))
+                if "__color" in match_word:
+                    colors_vals = get_color(match_word.lower(), replace_chars("/|", product[attr].lower(), " "))
                     new_val_el = new_val_el.replace("__color", colors_vals[1])
                     new_val_en = new_val_en.replace("__color", colors_vals[0])
         
         if not new_val_el:
-            product[attr] = [product[attr], product[addr]]
+            product[attr] = [product[attr], product[attr]]
         elif new_val_el == " __clear":
+            # Special commands
             product[attr] = ["", ""]
         else:
+            # Remove the first space
             new_val_el = new_val_el[1:][0].upper() + new_val_el[2:]
             new_val_en = new_val_en[1:][0].upper() + new_val_en[2:]
             if new_val_el[-1] == ',':
@@ -91,64 +98,56 @@ def process_attr_data(product, attr_grp):
 
 def static_pre_processing(product_info, attr_grp):
     # Apply rules to the data before inserting it
-    # product_info['name'] = product_info['name'].title()
-    product_info['ΥΛΙΚΟ'] = product_info['name']
-    product_info['ΧΡΩΜΑ'] = product_info['name']
+
+    product_info['ΥΛΙΚΟ'] = product_info['strap material']
+    product_info['ΧΡΩΜΑ'] = product_info['strap color']
+    
+    # dim = product_info['name'].split("mm")[0].split()[-1]
+    # product_info['ΔΙΑΣΤΑΣΕΙΣ'] = dim + "mm"
+
+    # Fix the name
+    nm = product_info['name'].replace("BRACELET ","")
+    product_info['name'] = nm
+    product_info['name material'] = product_info['strap material']
+    product_info['strap type'] = product_info['name']
     return product_info
 
-def static_post_processing(product_info, attr_grp):
-    (types, __) = load_pickle_obj("pkl_files/types.pkl")
-    
-    product_info['ΕΙΔΟΣ'] = ["",""]
-    product_info['ΕΙΔΟΣ'][0] = types[product_info['type']][1].title()
-    product_info['ΕΙΔΟΣ'][1] = types[product_info['type']][0].title()
-    product_info['type'] = types[product_info['type']]
+def static_post_processing(product_info, attr_grp):  
     product_info['ΠΛΗΡΟΦΟΡΙΕΣ'] = ["", ""]
-
+    
     if product_info["used"]:
-        product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][0] = "Χρησιμοποιείται στα "+product_info["used"]
+        product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][0] = "Χρησιμοποιείται στα ρολόγια "+product_info["used"]
         product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][1] = "Used in "+product_info["used"]
 
+    product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][0] += ". " + product_info['info gr']
+    product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][1] += ". " + product_info['info en']
+
+    # Maurice Laxroix Strap|Bracelet Color Material
+    product_info['base'] = ['','']
+    product_info['base'][1] = "Maurice Lacroix "+product_info['strap type'][0]
+    product_info['base'][0] = "Maurice Lacroix "+product_info['strap type'][1]
+    if product_info['ΧΡΩΜΑ'][1]: 
+        product_info['base'][1] += product_info['ΧΡΩΜΑ'][0] + " "
+        product_info['base'][0] += product_info['ΧΡΩΜΑ'][1] + " "
+    product_info['base'][1] += product_info['name material'][0].lower()
+    product_info['base'][0] += product_info['name material'][1].lower()
+
+    # if "BRACELET" in product_info['type']
+    # if product_info['ΧΡΩΜΑ'][0]:
+    # pprint(product_info)
+    # exit()
+
+    # Χρυσος Τοκάς
+    if product_info['clasp material'][0] and "steel" not in product_info['strap material']:
+        product_info['ΥΛΙΚΟ'][0] += ", με "+product_info['clasp material'][0].lower()
+        product_info['ΥΛΙΚΟ'][0] += product_info['clasp type'][0].lower()
+        product_info['ΥΛΙΚΟ'][1] += ", with "+product_info['clasp material'][1].lower()
+        product_info['ΥΛΙΚΟ'][1] += product_info['clasp type'][1].lower()
+    # pprint(product_info['ΥΛΙΚΟ'])
+    # exit()
+    # if product_info['number'] == "800-000061":
+    #     exit()
     return product_info
-
-def open_new_products(input_file):
-    new_products = open(input_file)
-    new_products = [line.replace('\n','') for line in new_products]
-
-    # Remove commas and trim spaces
-    new_products = [line.split(',') for line in new_products]
-
-    for product in range(len(new_products)):
-        for entry in range(len(new_products[product])):
-            new_products[product][entry] = \
-                                        new_products[product][entry].strip()
-
-    # Format data
-    for product in range(len(new_products)):
-        # Manufacturer
-        new_products[product][COL["number"]] = \
-                                   new_products[product][COL["number"]].title()
-        # Category
-        new_products[product][CATEG_INDX] = \
-                          new_products[product][CATEG_INDX].replace(' ', '')
-        new_products[product][CATEG_INDX] = \
-                                   new_products[product][CATEG_INDX].upper()
-        # Gender
-        new_products[product][GENDER_INDX] = \
-                                  new_products[product][GENDER_INDX].lower()
-        # Price
-        new_products[product][PRICE_INDX] = \
-                                           new_products[product][PRICE_INDX]
-
-        # Family
-        new_products[product][FAMILY_INDX] = \
-                                  new_products[product][FAMILY_INDX].upper()
-
-        # Collection
-        new_products[product][COLLEC_INDX] = \
-                                  new_products[product][COLLEC_INDX].title()
-
-    return new_products
 
 def open_product_attributes(input_file):
     # The csv will be converted to a list of dictionaries
@@ -192,8 +191,8 @@ def add_attributes(product_info, wb):
     attr_row_num = attributes_sheet.max_row + 1
 
     (categories_to_attribute, __, attributes_dict) = load_pickle_obj('pkl_files/attributes.pkl')
-    
-    attr_grp = categories_to_attribute["WATCHES>WATCH SPARE PARTS"]
+
+    attr_grp = categories_to_attribute["STRAPS>ΜΑURICE LACROIX"]
     attributes = attributes_dict[attr_grp]
 
     last_product_id = products_sheet['A' + str(row_num - 1)].value
@@ -203,7 +202,7 @@ def add_attributes(product_info, wb):
     attribute_info = static_pre_processing(product_info, attr_grp)
     attribute_info = process_attr_data(attribute_info, attr_grp)
     attribute_info = static_post_processing(product_info, attr_grp)
-    
+
     i = 0
     for attr in attributes:
         # If attribute is empty, don't insert the row
@@ -228,26 +227,30 @@ def add_product_name(product_info, wb):
     row_num = products_sheet.max_row
 
     # Create product name
-    product_name = product_info["name"]
+    nm = product_info["base"] 
+    title_en = nm[0] + " " + product_info['etc']+" "+product_info['number']
+    title_el = nm [1] + " " + product_info['etc']+" "+product_info['number']
 
     # Write product name
-    products_sheet['B' + str(row_num)] = product_name
-    products_sheet['C' + str(row_num)] = product_name
+    products_sheet['B' + str(row_num)] = title_el
+    products_sheet['C' + str(row_num)] = title_en
 
 def add_description(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
-    descr_el = descr_en = descr_meta_el = descr_meta_en = product_info['name']
+    descr_el = descr_meta_el = product_info['base'][1]+' '+product_info['number']
+    descr_en = descr_meta_en = product_info['base'][0]+' '+product_info['number']
 
     if product_info["used"]:
-        descr_el += ".</p><p>\n" + "Χρησιμοποιείται στα "
+        descr_el += ".</p><p>\n" + "Χρησιμοποιείται στα ρολόγια "
         descr_en += ".</p><p>\n" + "Used in "
-        descr_meta_el += ". Χρησιμοποιείται στα "
+        descr_meta_el += ". Χρησιμοποιείται στα ρολόγια "
         descr_meta_en += ". Used in "
-    descr_el += product_info["used"] 
-    descr_en += product_info["used"]
-    descr_meta_el += product_info["used"]
-    descr_meta_en += product_info["used"]
+
+    descr_el += product_info["used"] + ".</p><p>\n" + product_info['info gr']
+    descr_en += product_info["used"] + ".</p><p>\n" + product_info['info en']
+    descr_meta_el += product_info["used"] + ". " + product_info['info gr']
+    descr_meta_en += product_info["used"] + ". " + product_info['info en']
 
     # Write description
     products_sheet['AE' + str(row_num)] = '<p>' + descr_el + '</p>'
@@ -279,11 +282,9 @@ def add_meta_title(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
 
-    meta_title_en  = "Maurice Lacroix " + product_info["ΕΙΔΟΣ"][1] 
-    meta_title_en += " " + product_info["number"]
-
-    meta_title_el  = "Maurice Lacroix " + product_info["ΕΙΔΟΣ"][0] 
-    meta_title_el += " " + product_info["number"]
+    nm = product_info["base"]
+    meta_title_en = nm[0] + " " + product_info['etc']+" "+product_info['number']
+    meta_title_el = nm [1] + " " + product_info['etc']+" "+product_info['number']
 
     # Wrte meta titles
     products_sheet['AG' + str(row_num)] = meta_title_el
@@ -317,12 +318,13 @@ def add_category(product_info, wb):
     categories_dict = load_pickle_obj('pkl_files/categories.pkl')
 
     # Find category number from dictionary
-    categ = closest_match("WATCHES>WATCH SPARE PARTS", categories_dict)
+    categ = closest_match(CATEGORY, categories_dict)
 
     # Also add the parent categories
     broken_category = categ.split(">")
     parent_categ = broken_category[0]
     categ_val = str(categories_dict[parent_categ])
+
     for i in range(1, len(broken_category)):
         parent_categ = parent_categ + '>' + broken_category[i]
         categ_val += "," + str( categories_dict[parent_categ] )
@@ -343,19 +345,35 @@ def add_status(product_info, wb):
 def add_image(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
-
-    if not product_info["img"]:
-        image_dir = 'catalog/product/placeholder.jpg'
-    else:
-        image_dir = 'catalog/product/WATCHES/WATCH SPARE PARTS/' + product_info["number"] + ".jpg"
+    image_dir = 'catalog/product/STRAPS/MAURICE LACROIX/' + product_info["number"] + "a.jpg"
 
     # Write image directory
     products_sheet['O' + str(row_num)] = image_dir
 
+    # Extra image
+    sheet = wb["AdditionalImages"]
+    sheet.append(['' for i in range(sheet.max_column)])
+    row = sheet.max_row 
+
+    last_product_id = products_sheet['A' + str(row_num - 1)].value
+    curr_product_id = last_product_id + 1
+
+    image_dir = 'catalog/product/STRAPS/MAURICE LACROIX/' + product_info["number"] + "b.jpg"
+    sheet['A' + str(row)] = curr_product_id
+    sheet['B' + str(row)] = image_dir
+    sheet['C' + str(row)] = 1
+
+    if product_info['number'] in ["740-000060"]:
+        sheet.append(['' for i in range(sheet.max_column)])
+        row = sheet.max_row 
+        image_dir = 'catalog/product/STRAPS/MAURICE LACROIX/' + product_info["number"] + "c.jpg"
+        sheet['A' + str(row)] = curr_product_id
+        sheet['B' + str(row)] = image_dir
+        sheet['C' + str(row)] = 2
+
 def add_misc(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
-
     
     products_sheet['L'  + str(row_num)] = product_info["stock"]      #quantity
     products_sheet['P'  + str(row_num)] = 'yes'  #shipping

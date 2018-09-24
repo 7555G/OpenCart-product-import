@@ -3,7 +3,11 @@
 COLUMN_TRANSF_RULES = {}    # { 'ΚΑΣΑ': {'S.STEEL':'Ατσαλι'}}
 
 # Now define the transformation dictionaries for each column
+# __color0 : θυληκο
+# __color1: ουδέτερο
+# [eng, gr, lvl]
 
+# -----------------------------------------------------------------------------
 # ΡΟΛΟΓΙΑ
 watches_kasa = { 
          'STEEL':        ['stainless steel,','ανοξείδωτο ατσάλι,', 0],
@@ -26,6 +30,7 @@ gender = { 'mens':   ['Gents', 'Ανδρικό', 0],
 watches_atm = { '3':  ['3atm', '3atm', 0],
                 '5':  ['5atm', '5atm', 0],
                 '10': ['10atm','10atm', 0]}
+
 watches_mech = {
     '505':   ['Ronda 505', 'Ronda 505', 0],
     '515':   ['Ronda 515', 'Ronda 515', 0],
@@ -112,5 +117,116 @@ COLUMN_TRANSF_RULES['ΡΟΛΟΓΙΑ']['ΚΟΥΜΠΩΜΑ']        = watches_clasp
 COLUMN_TRANSF_RULES['ΡΟΛΟΓΙΑ']['ΚΑΠΑΚΙ']          = watches_back_type
 # COLUMN_TRANSF_RULES['ΡΟΛΟΓΙΑ']['ΔΕΣΙΜΟ']          = watches_strap
 # COLUMN_TRANSF_RULES['ΡΟΛΟΓΙΑ']['ΥΛΙΚΟ ΔΕΣΙΜΑΤΟΣ'] = watch_strap_material
-                                
-                      
+
+# ΡΟΛΟΓΙΑ                                
+# -----------------------------------------------------------------------------
+
+# -----------------------------------------------------------------------------
+# ΑΝΤΑΛΛΑΚΤΙΚΑ
+
+parts_color = {
+    # Dials
+    'dial __color1':        ['__color dial', '__color καντράν', 0],
+    'numerals __color0':    ['white numerals', '__color αρίθμηση', 0],
+    # Hands
+    'hand __color1':        ['__color','__color', 0],
+    'hand up, __color1':    ['__color','__color', 0],
+    'hand down, __color1':  ['__color','__color', 0],
+    # Clasp
+    'clasp __color1':       ['__color','__color', 0],
+    # Pin
+    'pin __color1':         ['__color','__color', 0],
+    # Clean if nothing
+    " ":                    ["__clear", "__clear", 0]
+}
+
+parts_material = {
+    'STEEL':            ['stainless steel,','ανοξείδωτο ατσάλι,', 0],
+    'S.S':              ['stainless steel,','ανοξείδωτο ατσάλι,', 0],
+    '__color1 gold':    ['__color gold', '__color χρυσό', 0],
+    " ":                ["__clear", "__clear", 0]
+}
+
+
+COLUMN_TRANSF_RULES['ΑΝΤΑΛΛΑΚΤΙΚΑ'] = {}
+COLUMN_TRANSF_RULES['ΑΝΤΑΛΛΑΚΤΙΚΑ']['ΧΡΩΜΑ'] = parts_color
+COLUMN_TRANSF_RULES['ΑΝΤΑΛΛΑΚΤΙΚΑ']['ΥΛΙΚΟ'] = parts_material
+
+# ΑΝΤΑΛΛΑΚΤΙΚΑ
+# -----------------------------------------------------------------------------
+
+
+# -----------------------------------------------------------------------------
+# ΛΟΥΡΑΚΙΑ
+
+straps_color = {
+    "__color1": ['__color', '__color', 0],
+    " ":        ["__clear", "__clear", 0]
+}
+
+straps_material = {
+    "alligator":    ['Mississippi alligator matte skin', 'δέρμα αλιγάτορα Mississippi ματ', 1],
+    "croco":        ['Luisiana crocodile matte skin', 'δέρμα κροκοδείλου Louisiana ματ', 1],
+    "croc imit":    ['Louisiana crocodile matte skin impression', 'δέρμα κροκοδείλου Louisiana ματ, σταμπαριστό', 1],
+    # " ":            ['__stop', '__stop', 1],
+    "lizard":       ['lizard leather', 'δέρμα σαύρας', 1],
+    "CAOUTCHOUC":   ['Rubber', 'Καουτσούκ', 1],
+    "ostrich":      ['ostrich leather', 'δέρμα στρουθοκάμηλου', 1],
+    "toro":         ['toro', 'toro', 1],
+    "galant":       ['galant', 'galant', 1],
+    "calf":         ['calf', 'calf', 1],
+    "nato":         ['nato', 'νατο', 1],
+    "ravena":       ['ravena', 'δερμάτινο ραβένα', 1],
+    # " ":            ['__stop', '__stop', 3],
+    "bracelet":     ['stainless steel','ανοξείδωτο ατσάλι', 1],
+    "yellow gold plated steel": ["Yellow gold plated steel", "Ανοξείδωτο ατσάλι με χρυσή επίστρωση", 1],
+    'STEEL':        ['stainless steel','ανοξείδωτο ατσάλι', 1],
+    'S.S':          ['stainless steel','ανοξείδωτο ατσάλι', 1]
+}
+
+COLUMN_TRANSF_RULES['ΛΟΥΡΑΚΙΑ'] = {}
+COLUMN_TRANSF_RULES['ΛΟΥΡΑΚΙΑ']['ΧΡΩΜΑ'] = straps_color
+COLUMN_TRANSF_RULES['ΛΟΥΡΑΚΙΑ']['ΥΛΙΚΟ'] = straps_material
+COLUMN_TRANSF_RULES['ΛΟΥΡΑΚΙΑ']['ΔΙΑΣΤΑΣΕΙΣ'] = {}
+
+# Extra
+straps_type = {
+    'bracelet':   ['bracelet ', 'μπρασελέ ', 0],
+    ' ':          ['strap ','λουράκι από ', 0]
+}
+
+straps_clasp_type = {
+    'folding':   ['folding buckle', 'αναδιπλώμενο κούμπωμα', 0],
+    'butterfly': ['folding buckle', 'αναδιπλώμενο κούμπωμα', 0],
+    'buckle':    ['Buckle','τοκά', 0],
+}
+
+straps_clasp_material = {
+    'yellow gold plated': ['yellow gold plated ', 'επιχρυσομένο ',0],
+    "__*":      ["__clear","__clear",0]
+}
+
+straps_material_names = {
+    "alligator":    ['alligator', 'δέρμα Αλιγάτορα', 1],
+    "croco":        ['croco', 'δέρμα Κροκοδείλου', 1],
+    "croc imit":    ['croco', 'δέρμα Κροκοδείλου', 1],
+    # " ":            ['__stop', '__stop', 1],
+    "lizard":       ['lizard', 'δέρμα Σαύρας', 1],
+    "CAOUTCHOUC":   ['Rubber', 'Καουτσούκ', 1],
+    "ostrich":      ['ostrich', 'δέρμα Στρουθοκάμηλου', 1],
+    "toro":         ['toro', 'δέρμα Toro', 1],
+    "galant":       ['galant', 'δέρμα Galant', 1],
+    "calf":         ['calf', 'δέρμα Calf', 1],
+    "nato":         ['nato', 'Νατο', 1],
+    "ravena":       ['ravena', 'δερμάτινο Ραβένα', 1],
+    # " ":            ['__stop', '__stop', 3],
+    'gold plated':  ['gold plated steel', 'επιχρυσωμένο ατσάλι',1],
+    'STEEL':        ['steel','ατσάλι', 1],
+    'S.S':          ['steel','ατσάλι', 1],
+    "bracelet":     ['steel','ατσάλι', 1]
+}
+
+COLUMN_TRANSF_RULES['ΛΟΥΡΑΚΙΑ']['strap type'] = straps_type
+COLUMN_TRANSF_RULES['ΛΟΥΡΑΚΙΑ']['clasp type'] = straps_clasp_type
+COLUMN_TRANSF_RULES['ΛΟΥΡΑΚΙΑ']['clasp material'] = straps_clasp_material
+COLUMN_TRANSF_RULES['ΛΟΥΡΑΚΙΑ']['name material'] = straps_material_names

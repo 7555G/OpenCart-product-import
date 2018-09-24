@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
 COLORS = {
-    'red':      ['κόκκινη', 'κόκκινο'], 
+    'red':      ['κόκκινη', 'κόκκινο'],
+    'dark blue':['σκούρο μπλε', 'σκούρο μπλε'], 
     'blue':     ['μπλε', 'μπλε'], 
     'navy blue':['Navy μπλε', 'Navy μπλε'],
     'rose':     ['ρωζ', 'ρωζ'],
@@ -11,20 +12,25 @@ COLORS = {
     'pink gold':['ρωζ χρυσή', 'ρωζ χρυσό'],
     'pink':     ['ρωζ', 'ρωζ'],
     'brown':    ['καφέ', 'καφέ'],
-    'black':    ['μαύρη', 'μάυρο'],
+    'black':    ['μαύρη', 'μαύρο'],
     'white':    ['λευκή', 'λευκό'],
     'yellow':   ['κίτρινη', 'κίτρινο'],
     'green':    ['πράσινη', 'πράσινο'],
     'purple':   ['μωβ','μωβ'],
     'orange':   ['πορτοκαλί', 'πορτοκαλί'],
     'grey':     ['γκρι', 'γκρι'],
+    'duco grey':['γκρι', 'γκρι'],
     'cyan':     ['γαλάζια', 'γαλάζιο'],
     'light blue':['γαλάζια', 'γαλάζιο'],
     'golden':    ['χρυσαφένια','χρυσαφί'],
-    'dark brown':['dark brown', 'σκούρο καφέ'],
-    'light brown':['light brown', 'ανοιχτό καφέ'],
+    'dark brown':['σκούρα καφέ', 'σκούρο καφέ'],
+    'light brown':['ανοιχτή καφέ', 'ανοιχτό καφέ'],
     'beige':    ['μπεζ','μπεζ'],
-    'bordeaux': ['μπορντό', 'μπορντό']
+    'bordeaux': ['μπορντό', 'μπορντό'],
+    'burgundy': ['burgundy', 'burgundy'],
+    'burgund': ['burgundy', 'burgundy'],
+    'cognac':   ['καφέ', 'καφέ'],
+    'chestnut': ['ανοιχτή καφέ', 'ανοιχτό καφέ']
     }
 
 # __color0, __color1
@@ -39,6 +45,22 @@ def get_color(pattern, string):
     pattern_blocks = pattern.split()
     color_pos = pattern_blocks.index(color)
     colorless_pattern = pattern.replace(color, "").strip()
+
+    # if we pattern = '__color' match with the first color you find
+    if pattern == "__color1" or pattern == "__color0":
+        # print("seaching color in: "+string)
+        curr = ""
+        prev_pos = 100000000
+        for col in COLORS:
+            if string.find(col.lower()) != -1 and string.find(col.lower()) < prev_pos:
+                curr = col
+                prev_pos = string.find(col)
+
+        if curr:
+            return [curr, COLORS[curr][color_ind]]
+        else:
+            return []
+
 
     # If the pattern without the color is not present, return
     if colorless_pattern not in string:
