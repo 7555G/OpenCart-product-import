@@ -22,6 +22,44 @@ def cleanup(wb):
     # print("Row to clean is: ", row_num)
     products_sheet.delete_rows(row_num)
 
+
+def open_product_attributes(input_file):
+    # The tsv will be converted to a list of dictionaries
+    # Now we index as [prod_num]["type"]
+    new_attrs = open(input_file, encoding = 'utf-8')
+    new_attrs = [line.replace('\n','') for line in new_attrs] 
+    new_attrs = [line.split('\t') for line in new_attrs]
+    attr_names = new_attrs.pop(0)
+
+    attrs_dicts = [{} for prod in new_attrs]
+    for prod_ind in range(len(new_attrs)):
+        for i in range(len(new_attrs[prod_ind])):
+            attrs_dicts[prod_ind][attr_names[i]] = new_attrs[prod_ind][i]
+    
+    return attrs_dicts
+
+
+def load_pickle_obj(file):
+    import pickle
+
+    with open(file, 'rb') as f:
+        return pickle.load(f)
+
+# XLSX modifier functions
+def add_empty_product(product_info, wb):
+    products_sheet = wb['Products']
+    products_sheet.append(['' for i in range(products_sheet.max_column)])
+    row_num = products_sheet.max_row
+
+    # Write the new product code
+    last_product_id = products_sheet['A' + str(row_num - 1)].value
+    curr_product_id = last_product_id + 1
+    products_sheet['A' + str(row_num)] = curr_product_id
+    
+    print("Insert new product with ID {} in row {} with Model: {}".format( \
+        curr_product_id, row_num, product_info["number"]))
+
+
 def process_attr_data(product, attr_grp):
     for attr in COLUMN_TRANSF_RULES[attr_grp]:
         # First create the list(of lists) based on the priorities
@@ -96,93 +134,27 @@ def process_attr_data(product, attr_grp):
 
     return product        
 
+
 def static_pre_processing(product_info, attr_grp):
     # Apply rules to the data before inserting it
+    product_info['name_material'] = product_info['ΥΛΙΚΟ']
 
-    product_info['ΥΛΙΚΟ'] = product_info['strap material']
-    product_info['ΧΡΩΜΑ'] = product_info['strap color']
-    
-    # dim = product_info['name'].split("mm")[0].split()[-1]
-    # product_info['ΔΙΑΣΤΑΣΕΙΣ'] = dim + "mm"
-
-    # Fix the name
-    nm = product_info['name'].replace("BRACELET ","")
-    product_info['name'] = nm
-    product_info['name material'] = product_info['strap material']
-    product_info['strap type'] = product_info['name']
     return product_info
+
 
 def static_post_processing(product_info, attr_grp):  
-    product_info['ΠΛΗΡΟΦΟΡΙΕΣ'] = ["", ""]
-    
-    if product_info["used"]:
-        product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][0] = "Χρησιμοποιείται στα ρολόγια "+product_info["used"]
-        product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][1] = "Used in "+product_info["used"]
+    product_info['ΠΛΗΡΟΦΟΡΙΕΣ'] = ['', '']
+    if product_info['info gr']:
+        product_info['ΠΛΗΡΟΦΟΡΙΕΣ'] = [product_info['info gr'], product_info['info en']]
 
-    product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][0] += ". " + product_info['info gr']
-    product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][1] += ". " + product_info['info en']
+    product_info['ΥΛΙΚΟ'][0] = product_info['ΥΛΙΚΟ'][0].replace(',', ' και')
+    product_info['ΥΛΙΚΟ'][1] = product_info['ΥΛΙΚΟ'][1].replace(',', ' and')
 
-    # Maurice Laxroix Strap|Bracelet Color Material
-    product_info['base'] = ['','']
-    product_info['base'][1] = "Maurice Lacroix "+product_info['strap type'][0]
-    product_info['base'][0] = "Maurice Lacroix "+product_info['strap type'][1]
-    if product_info['ΧΡΩΜΑ'][1]: 
-        product_info['base'][1] += product_info['ΧΡΩΜΑ'][0] + " "
-        product_info['base'][0] += product_info['ΧΡΩΜΑ'][1] + " "
-    product_info['base'][1] += product_info['name material'][0].lower()
-    product_info['base'][0] += product_info['name material'][1].lower()
+    product_info['brand'] = product_info['brand'].title()
+    product_info['category_short'] = product_info['category'].split('>')[-1].lower()[:-1]
 
-    # if "BRACELET" in product_info['type']
-    # if product_info['ΧΡΩΜΑ'][0]:
-    # pprint(product_info)
-    # exit()
-
-    # Χρυσος Τοκάς
-    if product_info['clasp material'][0] and "steel" not in product_info['strap material']:
-        product_info['ΥΛΙΚΟ'][0] += ", με "+product_info['clasp material'][0].lower()
-        product_info['ΥΛΙΚΟ'][0] += product_info['clasp type'][0].lower()
-        product_info['ΥΛΙΚΟ'][1] += ", with "+product_info['clasp material'][1].lower()
-        product_info['ΥΛΙΚΟ'][1] += product_info['clasp type'][1].lower()
-    # pprint(product_info['ΥΛΙΚΟ'])
-    # exit()
-    # if product_info['number'] == "800-000061":
-    #     exit()
     return product_info
 
-def open_product_attributes(input_file):
-    # The tsv will be converted to a list of dictionaries
-    # Now we index as [prod_num]["type"]
-    new_attrs = open(input_file)
-    new_attrs = [line.replace('\n','') for line in new_attrs] 
-    new_attrs = [line.split('\t') for line in new_attrs]
-    attr_names = new_attrs.pop(0)
-
-    attrs_dicts = [{} for prod in new_attrs]
-    for prod_ind in range(len(new_attrs)):
-        for i in range(len(new_attrs[prod_ind])):
-            attrs_dicts[prod_ind][attr_names[i]] = new_attrs[prod_ind][i]
-    
-    return attrs_dicts
-
-def load_pickle_obj(file):
-    import pickle
-
-    with open(file, 'rb') as f:
-        return pickle.load(f)
-
-# XLSX modifier functions
-def add_empty_product(product_info, wb):
-    products_sheet = wb['Products']
-    products_sheet.append(['' for i in range(products_sheet.max_column)])
-    row_num = products_sheet.max_row
-
-    # Write the new product code
-    last_product_id = products_sheet['A' + str(row_num - 1)].value
-    curr_product_id = last_product_id + 1
-    products_sheet['A' + str(row_num)] = curr_product_id
-    
-    print("Insert new product with ID {} in row {} with Model: {}".format( \
-        curr_product_id, row_num, product_info["number"]))
 
 def add_attributes(product_info, wb):
     products_sheet = wb['Products']
@@ -192,7 +164,7 @@ def add_attributes(product_info, wb):
 
     (categories_to_attribute, __, attributes_dict) = load_pickle_obj('pkl_files/attributes.pkl')
 
-    attr_grp = categories_to_attribute["STRAPS>ΜΑURICE LACROIX"]
+    attr_grp = categories_to_attribute[product_info['category']]
     attributes = attributes_dict[attr_grp]
 
     last_product_id = products_sheet['A' + str(row_num - 1)].value
@@ -201,7 +173,7 @@ def add_attributes(product_info, wb):
     # Data Processing
     attribute_info = static_pre_processing(product_info, attr_grp)
     attribute_info = process_attr_data(attribute_info, attr_grp)
-    attribute_info = static_post_processing(product_info, attr_grp)
+    attribute_info = static_post_processing(attribute_info, attr_grp)
 
     i = 0
     for attr in attributes:
@@ -222,51 +194,103 @@ def add_attributes(product_info, wb):
             attributes_sheet['E' + str(attr_row_num + i)] = ''
         i += 1
 
-def add_product_name(product_info, wb):
+    print(attribute_info['category_short'])
+    print(attr_grp)
+
+
+def add_product_name_and_meta_title(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
 
     # Create product name
-    nm = product_info["base"] 
-    title_en = nm[0] + " " + product_info['etc']+" "+product_info['number']
-    title_el = nm [1] + " " + product_info['etc']+" "+product_info['number']
+    if "bracelet" in product_info['category_short']:
+        title_el = product_info['brand'] + ' Ανδρικό Βραχιόλι από ' \
+                 + product_info['ΥΛΙΚΟ'][0].title() + ', ' + product_info['number']
+        title_en = product_info['brand'] + ' Mens Bracelet made of ' \
+                 + product_info['ΥΛΙΚΟ'][1].title() + ', ' + product_info['number']
+
+    if "pen" in product_info['category_short']:
+        title_el = product_info['brand'] + ' Στυλό από' \
+                 + product_info['name_material'][0].title() + ', ' + product_info['number']
+        title_en = product_info['brand'] + ' Pen made of ' \
+                 + product_info['name_material'][1].title() + ', ' + product_info['number']
+
+    if "wallet" in product_info['category_short']:
+        title_el = product_info['brand'] + ' Ανδρικό Δερμάτινο Πορτοφόλι, ' + product_info['number']
+        title_en = product_info['brand'] + ' Mens Leather Wallet, ' + product_info['number']
+
+    if "card holder" in product_info['category_short']:
+        title_el = product_info['brand'] + ' Δερμάτινη Θήκη για Κάρτες ' + product_info['number']
+        title_en = product_info['brand'] + ' Leather Card Holder ' + product_info['number']
+
+    meta_title_el = title_el + ' | Eurotimer'
+    meta_title_el = title_el + ' | Eurotimer'
+    meta_title_en = title_en + ' | Eurotimer'
 
     # Write product name
     products_sheet['B' + str(row_num)] = title_el
     products_sheet['C' + str(row_num)] = title_en
 
+    # Write meta titles
+    products_sheet['AG' + str(row_num)] = meta_title_el
+    products_sheet['AH' + str(row_num)] = meta_title_en
+
+
 def add_description(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
-    descr_el = descr_meta_el = product_info['base'][1]+' '+product_info['number']
-    descr_en = descr_meta_en = product_info['base'][0]+' '+product_info['number']
 
-    if product_info["used"]:
-        descr_el += ".</p><p>\n" + "Χρησιμοποιείται στα ρολόγια "
-        descr_en += ".</p><p>\n" + "Used in "
-        descr_meta_el += ". Χρησιμοποιείται στα ρολόγια "
-        descr_meta_en += ". Used in "
+    if "bracelet" in product_info['category_short']:
+        descr_el = 'Ανδρικό βραχιόλι από ' + product_info['ΥΛΙΚΟ'][0].lower() \
+                 + ' της εταιρίας ' + product_info['brand'] + '. '
+        descr_en = 'Mens bracelet made of ' + product_info['ΥΛΙΚΟ'][1].lower() \
+                 + ' by ' + product_info['brand'] + '. '
 
-    descr_el += product_info["used"] + ".</p><p>\n" + product_info['info gr']
-    descr_en += product_info["used"] + ".</p><p>\n" + product_info['info en']
-    descr_meta_el += product_info["used"] + ". " + product_info['info gr']
-    descr_meta_en += product_info["used"] + ". " + product_info['info en']
+    if "pen" in product_info['category_short']:
+        descr_el = 'Στυλό από ' + product_info['name_material'][0].lower() \
+                 + ' της εταιρίας ' + product_info['brand'] + '. '
+        descr_en = 'Pen made of ' + product_info['name_material'][1].lower() \
+                 + ' by ' + product_info['brand'] + '. '
+
+
+    if "wallet" in product_info['category_short']:
+        descr_el = 'Ανδρικό πορτοφόλι από ' + product_info['ΥΛΙΚΟ'][0].lower() \
+                 + ' της εταιρίας ' + product_info['brand'] + '. '
+        descr_en = 'Mens wallet made of ' + product_info['ΥΛΙΚΟ'][1].lower() \
+                 + ' by ' + product_info['brand'] + '. '
+
+    if "card holder" in product_info['category_short']:
+        descr_el = 'Ανδρικό πορτοφόλι από ' + product_info['ΥΛΙΚΟ'][0].lower() \
+                 + ' της εταιρίας ' + product_info['brand'] + '. '
+        descr_en = 'Mens wallet made of ' + product_info['ΥΛΙΚΟ'][1].lower() \
+                 + ' by ' + product_info['brand'] + '. '
+
+    if product_info['info gr']:
+        descr_el += product_info['info gr']
+        descr_en += product_info['info en']
+
+    meta_descr_el = descr_el
+    meta_descr_en = descr_en
 
     # Write description
     products_sheet['AE' + str(row_num)] = '<p>' + descr_el + '</p>'
     products_sheet['AF' + str(row_num)] = '<p>' + descr_en + '</p>'
 
     # Write meta description
-    products_sheet['AI' + str(row_num)] = descr_meta_el
-    products_sheet['AJ' + str(row_num)] = descr_meta_en
+    products_sheet['AI' + str(row_num)] = meta_descr_el
+    products_sheet['AJ' + str(row_num)] = meta_descr_en
+
 
 def add_SEO(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
 
-    SEO = "Maurice_Lacroix-" + product_info["number"]
+    SEO = (product_info['brand'] + '-' + product_info['category_short'] + '-' \
+        + product_info['number']).replace(' ', '_')
+
     # Write SEO
     products_sheet['AD' + str(row_num)] = SEO
+
 
 def add_model(product_info, wb):
     products_sheet = wb['Products']
@@ -278,17 +302,6 @@ def add_model(product_info, wb):
     # Write model
     products_sheet['M' + str(row_num)] = model
 
-def add_meta_title(product_info, wb):
-    products_sheet = wb['Products']
-    row_num = products_sheet.max_row
-
-    nm = product_info["base"]
-    meta_title_en = nm[0] + " " + product_info['etc']+" "+product_info['number']
-    meta_title_el = nm [1] + " " + product_info['etc']+" "+product_info['number']
-
-    # Wrte meta titles
-    products_sheet['AG' + str(row_num)] = meta_title_el
-    products_sheet['AH' + str(row_num)] = meta_title_en
 
 def add_price(product_info, wb):
     products_sheet = wb['Products']
@@ -300,17 +313,19 @@ def add_price(product_info, wb):
     # Write price
     products_sheet['Q' + str(row_num)] = price
 
+
 def add_manufacturer(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
 
     # Check manufacturer
-    manuf = 'Maurice Lacroix'
+    manuf = product_info['brand']
     if manuf == '':
         print('Warning: invalid manufacturer name!')
 
     # Write manufacturer
     products_sheet['N' + str(row_num)] = manuf
+
 
 def add_category(product_info, wb):
     products_sheet = wb['Products']
@@ -318,7 +333,7 @@ def add_category(product_info, wb):
     categories_dict = load_pickle_obj('pkl_files/categories.pkl')
 
     # Find category number from dictionary
-    categ = closest_match(CATEGORY, categories_dict)
+    categ = closest_match(product_info['category'], categories_dict)
 
     # Also add the parent categories
     broken_category = categ.split(">")
@@ -333,6 +348,7 @@ def add_category(product_info, wb):
     # Write category number
     products_sheet['D' + str(row_num)] = categ_val
 
+
 def add_status(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
@@ -342,10 +358,12 @@ def add_status(product_info, wb):
     else:
         products_sheet['AB' + str(row_num)] = 'false'
 
+
 def add_image(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
-    image_dir = 'catalog/product/STRAPS/MAURICE LACROIX/' + product_info["number"] + "a.jpg"
+    image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+              + '/' + product_info["number"] + "a.jpg"
 
     # Write image directory
     products_sheet['O' + str(row_num)] = image_dir
@@ -358,18 +376,12 @@ def add_image(product_info, wb):
     last_product_id = products_sheet['A' + str(row_num - 1)].value
     curr_product_id = last_product_id + 1
 
-    image_dir = 'catalog/product/STRAPS/MAURICE LACROIX/' + product_info["number"] + "b.jpg"
+    image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+              + '/' + product_info["number"] + "b.jpg"
     sheet['A' + str(row)] = curr_product_id
     sheet['B' + str(row)] = image_dir
     sheet['C' + str(row)] = 1
 
-    if product_info['number'] in ["740-000060"]:
-        sheet.append(['' for i in range(sheet.max_column)])
-        row = sheet.max_row 
-        image_dir = 'catalog/product/STRAPS/MAURICE LACROIX/' + product_info["number"] + "c.jpg"
-        sheet['A' + str(row)] = curr_product_id
-        sheet['B' + str(row)] = image_dir
-        sheet['C' + str(row)] = 2
 
 def add_misc(product_info, wb):
     products_sheet = wb['Products']
@@ -378,9 +390,9 @@ def add_misc(product_info, wb):
     products_sheet['L'  + str(row_num)] = product_info["stock"]      #quantity
     products_sheet['P'  + str(row_num)] = 'yes'  #shipping
     products_sheet['R'  + str(row_num)] = 0      #points
-    products_sheet['S'  + str(row_num)] = '2018-09-11 14:00:00' #date_added
-    products_sheet['T'  + str(row_num)] = '2018-09-11 14:00:00'#date_modified
-    products_sheet['U'  + str(row_num)] = '2018-09-11' #date_available
+    products_sheet['S'  + str(row_num)] = '2018-09-25 18:00:00' #date_added
+    products_sheet['T'  + str(row_num)] = '2018-09-25 18:00:00'#date_modified
+    products_sheet['U'  + str(row_num)] = '2018-09-25' #date_available
     products_sheet['V'  + str(row_num)] = 0      #weight
     products_sheet['W'  + str(row_num)] = 'kg'   #weight_unit
     products_sheet['X'  + str(row_num)] = 0      #length
@@ -406,27 +418,28 @@ if __name__ == '__main__':
 
     wb = load_workbook(products_xlsx)
     new_products = open_product_attributes(SPECS_TSV)
-    products = 0
+    products_count = 0
     
+
     # Iterate the inputs
     for product in new_products:
-        if not product["type"]: continue
+        if not product["category"]: continue
         add_empty_product(product, wb)
         add_attributes(product, wb)
-        add_product_name(product, wb)
+        add_product_name_and_meta_title(product, wb)
         add_description(product, wb)
         add_SEO(product, wb)
         add_model(product, wb)
-        add_meta_title(product, wb)
         add_price(product, wb)
         add_manufacturer(product, wb)
         add_category(product, wb)
         add_status(product, wb)
         add_image(product, wb)
         add_misc(product, wb)
-        products += 1
+        products_count += 1
+        wb.save(products_xlsx)
 
     # Cleanup and Save to file
-    print("Added {} products.".format(products))
+    print("Added {} products.".format(products_count))
     cleanup(wb)
     wb.save(products_xlsx)
