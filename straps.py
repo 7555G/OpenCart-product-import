@@ -150,7 +150,7 @@ def static_post_processing(product_info, attr_grp):
     return product_info
 
 def open_product_attributes(input_file):
-    # The csv will be converted to a list of dictionaries
+    # The tsv will be converted to a list of dictionaries
     # Now we index as [prod_num]["type"]
     new_attrs = open(input_file)
     new_attrs = [line.replace('\n','') for line in new_attrs] 
@@ -397,15 +397,15 @@ def add_misc(product_info, wb):
 
 if __name__ == '__main__':
 
-    if len(argv) < 2:
-        print('arg1: specs.csv | arg2: products.xlsx')
+    if len(argv) < 3:
+        print('arg1: specs.tsv | arg2: products.xlsx')
         exit(1)
 
-    SPECS_CSV = argv[1]
+    SPECS_TSV = argv[1]
     products_xlsx = argv[2]
 
     wb = load_workbook(products_xlsx)
-    new_products = open_product_attributes(SPECS_CSV)
+    new_products = open_product_attributes(SPECS_TSV)
     products = 0
     
     # Iterate the inputs

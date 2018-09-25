@@ -518,16 +518,16 @@ def add_misc(product_info, wb):
 if __name__ == '__main__':
 
     if len(argv) < 4:
-        print('arg1: specs.csv | arg2: attrs.csv | arg3: products.xlsx')
+        print('arg1: specs.tsv | arg2: attrs.tsv | arg3: products.xlsx')
         exit(1)
 
-    SPECS_CSV = argv[1]
-    ATTRS_CSV = argv[2]
+    SPECS_TSV = argv[1]
+    ATTRS_TSV = argv[2]
     products_xlsx = argv[3]
 
     wb = load_workbook(products_xlsx)
-    new_products = open_new_products(SPECS_CSV)
-    new_attributes = open_product_attributes(ATTRS_CSV)
+    new_products = open_new_products(SPECS_TSV)
+    new_attributes = open_product_attributes(ATTRS_TSV)
     products = 0
     
     # Iterate the inputs
