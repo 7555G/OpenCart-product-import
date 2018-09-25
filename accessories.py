@@ -194,9 +194,6 @@ def add_attributes(product_info, wb):
             attributes_sheet['E' + str(attr_row_num + i)] = ''
         i += 1
 
-    print(attribute_info['category_short'])
-    print(attr_grp)
-
 
 def add_product_name_and_meta_title(product_info, wb):
     products_sheet = wb['Products']
@@ -210,7 +207,7 @@ def add_product_name_and_meta_title(product_info, wb):
                  + product_info['ΥΛΙΚΟ'][1].title() + ', ' + product_info['number']
 
     if "pen" in product_info['category_short']:
-        title_el = product_info['brand'] + ' Στυλό από' \
+        title_el = product_info['brand'] + ' Στυλό από ' \
                  + product_info['name_material'][0].title() + ', ' + product_info['number']
         title_en = product_info['brand'] + ' Pen made of ' \
                  + product_info['name_material'][1].title() + ', ' + product_info['number']
@@ -221,9 +218,34 @@ def add_product_name_and_meta_title(product_info, wb):
 
     if "card holder" in product_info['category_short']:
         title_el = product_info['brand'] + ' Δερμάτινη Θήκη για Κάρτες ' + product_info['number']
-        title_en = product_info['brand'] + ' Leather Card Holder ' + product_info['number']
+        title_en = product_info['brand'] + ' Leather Card Holder, ' + product_info['number']
 
-    meta_title_el = title_el + ' | Eurotimer'
+    if "pendant" in product_info['category_short']:
+        temp_categ = ['Ανδρικό Κολιέ', 'Mens Pendant']
+        if 'cross' in product_info['info en'].lower():
+            temp_categ = ['Ανδρικός Σταυρός', 'Mens Cross']
+        title_el = product_info['brand'] + ' ' + temp_categ[0] + ' από ' \
+                 + product_info['ΥΛΙΚΟ'][0].title() + ', ' + product_info['number']
+        title_en = product_info['brand'] + ' ' + temp_categ[1] + ' made of ' \
+                 + product_info['ΥΛΙΚΟ'][1].title() + ', ' + product_info['number']
+
+    if "cufflink" in product_info['category_short']:
+        title_el = product_info['brand'] + ' Ανδρικά Μανικετόκουμπα από ' \
+                 + product_info['name_material'][0].title() + ', ' + product_info['number']
+        title_en = product_info['brand'] + ' Mens Cufflinks made of ' \
+                 + product_info['name_material'][1].title() + ', ' + product_info['number']
+
+    if "gift set" in product_info['category_short']:
+        title_el = product_info['brand'] + ' Σετ Δώρων από ' \
+                 + product_info['name_material'][0].title() + ', ' + product_info['number']
+        title_en = product_info['brand'] + ' Gift Set made of ' \
+                 + product_info['name_material'][1].title() + ', ' + product_info['number']
+        if 'leather' in product_info['name_material'][1].lower():
+            title_el = product_info['brand'] + ' ' + product_info['name_material'][0].title() \
+                     + ' Σετ Δώρων, ' + product_info['number']
+            title_en = product_info['brand'] + ' ' + product_info['name_material'][1].title() \
+                     + ' Gift Set, ' + product_info['number']
+
     meta_title_el = title_el + ' | Eurotimer'
     meta_title_en = title_en + ' | Eurotimer'
 
@@ -242,28 +264,53 @@ def add_description(product_info, wb):
 
     if "bracelet" in product_info['category_short']:
         descr_el = 'Ανδρικό βραχιόλι από ' + product_info['ΥΛΙΚΟ'][0].lower() \
-                 + ' της εταιρίας ' + product_info['brand'] + '. '
+                 + ', της εταιρίας ' + product_info['brand'] + '. '
         descr_en = 'Mens bracelet made of ' + product_info['ΥΛΙΚΟ'][1].lower() \
-                 + ' by ' + product_info['brand'] + '. '
+                 + ', by ' + product_info['brand'] + '. '
 
     if "pen" in product_info['category_short']:
         descr_el = 'Στυλό από ' + product_info['name_material'][0].lower() \
-                 + ' της εταιρίας ' + product_info['brand'] + '. '
+                 + ', της εταιρίας ' + product_info['brand'] + '. '
         descr_en = 'Pen made of ' + product_info['name_material'][1].lower() \
-                 + ' by ' + product_info['brand'] + '. '
-
+                 + ', by ' + product_info['brand'] + '. '
 
     if "wallet" in product_info['category_short']:
         descr_el = 'Ανδρικό πορτοφόλι από ' + product_info['ΥΛΙΚΟ'][0].lower() \
-                 + ' της εταιρίας ' + product_info['brand'] + '. '
+                 + ', της εταιρίας ' + product_info['brand'] + '. '
         descr_en = 'Mens wallet made of ' + product_info['ΥΛΙΚΟ'][1].lower() \
-                 + ' by ' + product_info['brand'] + '. '
+                 + ', by ' + product_info['brand'] + '. '
 
     if "card holder" in product_info['category_short']:
         descr_el = 'Ανδρικό πορτοφόλι από ' + product_info['ΥΛΙΚΟ'][0].lower() \
-                 + ' της εταιρίας ' + product_info['brand'] + '. '
+                 + ', της εταιρίας ' + product_info['brand'] + '. '
         descr_en = 'Mens wallet made of ' + product_info['ΥΛΙΚΟ'][1].lower() \
-                 + ' by ' + product_info['brand'] + '. '
+                 + ', by ' + product_info['brand'] + '. '
+
+    if "pendant" in product_info['category_short']:
+        temp_categ = ['Ανδρικό Κολιέ', 'Mens Pendant']
+        if 'cross' in product_info['info en']:
+            temp_categ = ['Ανδρικός Σταυρός', 'Mens Cross']
+        descr_el = temp_categ[0].capitalize() + ' από ' + product_info['ΥΛΙΚΟ'][0].lower() \
+                 + ', της εταιρίας ' + product_info['brand'] + '. '
+        descr_en = temp_categ[1].capitalize() + ' από ' + product_info['ΥΛΙΚΟ'][1].lower() \
+                 + ', της εταιρίας ' + product_info['brand'] + '. '
+
+    if "cufflink" in product_info['category_short']:
+        descr_el = 'Ανδρικά μανικετόκουμπα από ' + product_info['name_material'][0].lower() \
+                 + ', από την εταιρία ' + product_info['brand'] + '. '
+        descr_en = 'Mens cufflinks made of ' + product_info['name_material'][1].lower() \
+                 + ', by ' + product_info['brand'] + '. '
+
+    if "gift set" in product_info['category_short']:
+        descr_el = 'Σετ δώρων από ' + product_info['name_material'][0].lower() \
+                 + ', της εταιρίας ' + product_info['brand'] + '. '
+        descr_en = 'Gift set made of ' + product_info['name_material'][1].lower() \
+                 + ', by ' + product_info['brand'] + '. '
+        if 'leather' in product_info['name_material'][1].lower():
+            descr_el = product_info['name_material'][0].capitalize() \
+                     + ' σετ δώρων, από την εταιρία ' + product_info['brand'] + '. '
+            descr_en = product_info['name_material'][1].capitalize() \
+                     + 'gift set, by ' + product_info['brand'] + '. '
 
     if product_info['info gr']:
         descr_el += product_info['info gr']
