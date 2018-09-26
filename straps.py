@@ -12,6 +12,11 @@ from libs.utilities import *
 # Maurice Laxroix Strap|Bracelet Color Material Buckle Info Number : Site 
 MANUFACTURER = "Maurice Lacroix"
 CATEGORY = "STRAPS>MAURICE LACROIX"
+DISCOUNTS = {
+    "449-000020": 0.15,
+    "450-000332": 0.15, 
+    "449-000025": 0.15, 
+}
 
 
 def cleanup(wb):
@@ -116,21 +121,21 @@ def static_post_processing(product_info, attr_grp):
     product_info['ΠΛΗΡΟΦΟΡΙΕΣ'] = ["", ""]
     
     if product_info["used"]:
-        product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][0] = "Χρησιμοποιείται στα ρολόγια "+product_info["used"]
-        product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][1] = "Used in "+product_info["used"]
+        product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][0] = "Χρησιμοποιείται στα ρολόγια "+product_info["used"]+". "
+        product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][1] = "Used with watches "+product_info["used"]+". "
 
-    product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][0] += ". " + product_info['info gr']
-    product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][1] += ". " + product_info['info en']
+    product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][0] += product_info['info gr']
+    product_info['ΠΛΗΡΟΦΟΡΙΕΣ'][1] += product_info['info en']
 
     # Maurice Laxroix Strap|Bracelet Color Material
     product_info['base'] = ['','']
     product_info['base'][1] = "Maurice Lacroix "+product_info['strap type'][0]
     product_info['base'][0] = "Maurice Lacroix "+product_info['strap type'][1]
     if product_info['ΧΡΩΜΑ'][1]: 
-        product_info['base'][1] += product_info['ΧΡΩΜΑ'][0] + " "
-        product_info['base'][0] += product_info['ΧΡΩΜΑ'][1] + " "
-    product_info['base'][1] += product_info['name material'][0].lower()
-    product_info['base'][0] += product_info['name material'][1].lower()
+        product_info['base'][1] += product_info['ΧΡΩΜΑ'][0].title() + " "
+        product_info['base'][0] += product_info['ΧΡΩΜΑ'][1].title() + " "
+    product_info['base'][1] += product_info['name material'][0].title()
+    product_info['base'][0] += product_info['name material'][1].title()
 
     # if "BRACELET" in product_info['type']
     # if product_info['ΧΡΩΜΑ'][0]:
@@ -144,6 +149,7 @@ def static_post_processing(product_info, attr_grp):
         product_info['ΥΛΙΚΟ'][1] += ", with "+product_info['clasp material'][1].lower()
         product_info['ΥΛΙΚΟ'][1] += product_info['clasp type'][1].lower()
     # pprint(product_info['ΥΛΙΚΟ'])
+    # pprint(product_info['ΠΛΗΡΟΦΟΡΙΕΣ'])
     # exit()
     # if product_info['number'] == "800-000061":
     #     exit()
@@ -201,7 +207,7 @@ def add_attributes(product_info, wb):
     # Data Processing
     attribute_info = static_pre_processing(product_info, attr_grp)
     attribute_info = process_attr_data(attribute_info, attr_grp)
-    attribute_info = static_post_processing(product_info, attr_grp)
+    attribute_info = static_post_processing(attribute_info, attr_grp)
 
     i = 0
     for attr in attributes:
@@ -228,8 +234,8 @@ def add_product_name(product_info, wb):
 
     # Create product name
     nm = product_info["base"] 
-    title_en = nm[0] + " " + product_info['etc']+" "+product_info['number']
-    title_el = nm [1] + " " + product_info['etc']+" "+product_info['number']
+    title_en = nm[0] + ", " + product_info['etc']
+    title_el = nm [1] + ", " + product_info['etc']
 
     # Write product name
     products_sheet['B' + str(row_num)] = title_el
@@ -283,8 +289,8 @@ def add_meta_title(product_info, wb):
     row_num = products_sheet.max_row
 
     nm = product_info["base"]
-    meta_title_en = nm[0] + " " + product_info['etc']+" "+product_info['number']
-    meta_title_el = nm [1] + " " + product_info['etc']+" "+product_info['number']
+    meta_title_en = nm[0] + ", " + product_info['etc']
+    meta_title_el = nm [1] + ", " + product_info['etc']
 
     # Wrte meta titles
     products_sheet['AG' + str(row_num)] = meta_title_el
@@ -371,6 +377,27 @@ def add_image(product_info, wb):
         sheet['B' + str(row)] = image_dir
         sheet['C' + str(row)] = 2
 
+def add_discount(product_info, wb):
+    num = product_info['number']
+    if num not in DISCOUNTS: return
+    
+    # Get Product ID
+    products_sheet = wb['Products']
+    row_num = products_sheet.max_row
+    last_product_id = products_sheet['A' + str(row_num - 1)].value
+    curr_product_id = last_product_id + 1
+
+    sheet = wb["Specials"]
+    sheet.append(['' for i in range(sheet.max_column)])
+    row = sheet.max_row 
+
+    sheet['A' + str(row)] = curr_product_id
+    sheet['B' + str(row)] = "Default"
+    sheet['C' + str(row)] = 0
+    sheet['D' + str(row)] = float(product_info['price']) * (1 - DISCOUNTS[num])
+    sheet['E' + str(row)] = '2018-09-11'
+    sheet['F' + str(row)] = '2019-09-11'
+
 def add_misc(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
@@ -423,10 +450,12 @@ if __name__ == '__main__':
         add_category(product, wb)
         add_status(product, wb)
         add_image(product, wb)
+        add_discount(product, wb)
         add_misc(product, wb)
         products += 1
 
     # Cleanup and Save to file
+    # exit()
     print("Added {} products.".format(products))
     cleanup(wb)
     wb.save(products_xlsx)

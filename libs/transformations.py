@@ -90,7 +90,7 @@ watches_strap_material = {
 watches_clasp_type = {
     'normal':    ['Buckle','τοκάς', 0],
     'folding':   ['folding buckle', 'αναδιπλώμενο κούμπωμα', 0],
-    'butterfly': ['folding buckle', 'αναδιπλώμενο κούμπωμα', 0]
+    'butterfly': ['butterfly buckle', 'αναδιπλώμενο κούμπωμα', 0]
 }
 
 watches_back_type = {
@@ -176,7 +176,7 @@ straps_material = {
     "galant":       ['galant', 'galant', 1],
     "calf":         ['calf', 'calf', 1],
     "nato":         ['nato', 'νατο', 1],
-    "ravena":       ['ravena', 'δερμάτινο ραβένα', 1],
+    "ravenna":       ['ravenna', 'δερμάτινο ραβένα', 1],
     # " ":            ['__stop', '__stop', 3],
     "bracelet":     ['stainless steel','ανοξείδωτο ατσάλι', 1],
     "yellow gold plated steel": ["Yellow gold plated steel", "Ανοξείδωτο ατσάλι με χρυσή επίστρωση", 1],
@@ -197,7 +197,7 @@ straps_type = {
 
 straps_clasp_type = {
     'folding':   ['folding buckle', 'αναδιπλώμενο κούμπωμα', 0],
-    'butterfly': ['folding buckle', 'αναδιπλώμενο κούμπωμα', 0],
+    'butterfly': ['butterfly buckle', 'αναδιπλώμενο κούμπωμα', 0],
     'buckle':    ['Buckle','τοκά', 0],
 }
 
@@ -218,7 +218,7 @@ straps_material_names = {
     "galant":       ['galant', 'δέρμα Galant', 1],
     "calf":         ['calf', 'δέρμα Calf', 1],
     "nato":         ['nato', 'Νατο', 1],
-    "ravena":       ['ravena', 'δερμάτινο Ραβένα', 1],
+    "ravenna":       ['ravenna', 'δερμάτινο Ραβένα', 1],
     # " ":            ['__stop', '__stop', 3],
     'gold plated':  ['gold plated steel', 'επιχρυσωμένο ατσάλι',1],
     'STEEL':        ['steel','ατσάλι', 1],
