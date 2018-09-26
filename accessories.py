@@ -201,9 +201,9 @@ def add_product_name_and_meta_title(product_info, wb):
 
     # Create product name
     if "bracelet" in product_info['category_short']:
-        title_el = product_info['brand'] + ' Ανδρικό Βραχιόλι από ' \
+        title_el = product_info['brand'] + ' ' + product_info['gender'][0] + ' Βραχιόλι από ' \
                  + product_info['ΥΛΙΚΟ'][0].title() + ', ' + product_info['number']
-        title_en = product_info['brand'] + ' Mens Bracelet made of ' \
+        title_en = product_info['brand'] + ' ' + product_info['gender'][1] + ' Bracelet made of ' \
                  + product_info['ΥΛΙΚΟ'][1].title() + ', ' + product_info['number']
 
     if "pen" in product_info['category_short']:
@@ -213,27 +213,29 @@ def add_product_name_and_meta_title(product_info, wb):
                  + product_info['name_material'][1].title() + ', ' + product_info['number']
 
     if "wallet" in product_info['category_short']:
-        title_el = product_info['brand'] + ' Ανδρικό Δερμάτινο Πορτοφόλι, ' + product_info['number']
-        title_en = product_info['brand'] + ' Mens Leather Wallet, ' + product_info['number']
+        title_el = product_info['brand'] + ' ' + product_info['gender'][0] \
+                 + ' Δερμάτινο Πορτοφόλι, ' + product_info['number']
+        title_en = product_info['brand'] + ' ' + product_info['gender'][1] \
+                 + ' Leather Wallet, ' + product_info['number']
 
     if "card holder" in product_info['category_short']:
         title_el = product_info['brand'] + ' Δερμάτινη Θήκη για Κάρτες ' + product_info['number']
         title_en = product_info['brand'] + ' Leather Card Holder, ' + product_info['number']
 
     if "pendant" in product_info['category_short']:
-        temp_categ = ['Ανδρικό Κολιέ', 'Mens Pendant']
+        temp_categ = [product_info['gender'][0] + ' Κολιέ', \
+                      product_info['gender'][1] + ' Pendant']
         if 'cross' in product_info['info en'].lower():
-            temp_categ = ['Ανδρικός Σταυρός', 'Mens Cross']
+            temp_categ = [product_info['gender'][0] + 'ς Σταυρός', \
+                          product_info['gender'][1] + ' Cross']
         title_el = product_info['brand'] + ' ' + temp_categ[0] + ' από ' \
                  + product_info['ΥΛΙΚΟ'][0].title() + ', ' + product_info['number']
         title_en = product_info['brand'] + ' ' + temp_categ[1] + ' made of ' \
                  + product_info['ΥΛΙΚΟ'][1].title() + ', ' + product_info['number']
 
     if "cufflink" in product_info['category_short']:
-        title_el = product_info['brand'] + ' Ανδρικά Μανικετόκουμπα από ' \
-                 + product_info['name_material'][0].title() + ', ' + product_info['number']
-        title_en = product_info['brand'] + ' Mens Cufflinks made of ' \
-                 + product_info['name_material'][1].title() + ', ' + product_info['number']
+        title_el = product_info['brand'] + ' Μανικετόκουμπα, ' + product_info['number']
+        title_en = product_info['brand'] + ' Cufflinks, ' + product_info['number']
 
     if "gift set" in product_info['category_short']:
         title_el = product_info['brand'] + ' Σετ Δώρων από ' \
@@ -263,10 +265,12 @@ def add_description(product_info, wb):
     row_num = products_sheet.max_row
 
     if "bracelet" in product_info['category_short']:
-        descr_el = 'Ανδρικό βραχιόλι από ' + product_info['ΥΛΙΚΟ'][0].lower() \
-                 + ', της εταιρίας ' + product_info['brand'] + '. '
-        descr_en = 'Mens bracelet made of ' + product_info['ΥΛΙΚΟ'][1].lower() \
-                 + ', by ' + product_info['brand'] + '. '
+        descr_el = product_info['gender'][0] + ' βραχιόλι από ' \
+                 + product_info['ΥΛΙΚΟ'][0].lower() + ', της εταιρίας ' \
+                 + product_info['brand'] + '. '
+        descr_en = product_info['gender'][1] + ' bracelet made of ' \
+                 + product_info['ΥΛΙΚΟ'][1].lower() + ', by ' \
+                 + product_info['brand'] + '. '
 
     if "pen" in product_info['category_short']:
         descr_el = 'Στυλό από ' + product_info['name_material'][0].lower() \
@@ -275,30 +279,34 @@ def add_description(product_info, wb):
                  + ', by ' + product_info['brand'] + '. '
 
     if "wallet" in product_info['category_short']:
-        descr_el = 'Ανδρικό πορτοφόλι από ' + product_info['ΥΛΙΚΟ'][0].lower() \
-                 + ', της εταιρίας ' + product_info['brand'] + '. '
-        descr_en = 'Mens wallet made of ' + product_info['ΥΛΙΚΟ'][1].lower() \
-                 + ', by ' + product_info['brand'] + '. '
+        descr_el = product_info['gender'][0] + ' πορτοφόλι από ' \
+                 + product_info['ΥΛΙΚΟ'][0].lower() + ', της εταιρίας ' \
+                 + product_info['brand'] + '. '
+        descr_en = product_info['gender'][1] + ' wallet made of ' \
+                 + product_info['ΥΛΙΚΟ'][1].lower() + ', by ' \
+                 + product_info['brand'] + '. '
 
     if "card holder" in product_info['category_short']:
-        descr_el = 'Ανδρικό πορτοφόλι από ' + product_info['ΥΛΙΚΟ'][0].lower() \
+        descr_el = 'Θήκη για κάρτες από ' + product_info['ΥΛΙΚΟ'][0].lower() \
                  + ', της εταιρίας ' + product_info['brand'] + '. '
-        descr_en = 'Mens wallet made of ' + product_info['ΥΛΙΚΟ'][1].lower() \
+        descr_en = 'Card holder made of ' + product_info['ΥΛΙΚΟ'][1].lower() \
                  + ', by ' + product_info['brand'] + '. '
 
     if "pendant" in product_info['category_short']:
-        temp_categ = ['Ανδρικό Κολιέ', 'Mens Pendant']
-        if 'cross' in product_info['info en']:
-            temp_categ = ['Ανδρικός Σταυρός', 'Mens Cross']
+        temp_categ = [product_info['gender'][0] + ' Κολιέ', \
+                      product_info['gender'][1] + ' Pendant']
+        if 'cross' in product_info['info en'].lower():
+            temp_categ = [product_info['gender'][0] + 'ς Σταυρός', \
+                          product_info['gender'][1] + ' Cross']
         descr_el = temp_categ[0].capitalize() + ' από ' + product_info['ΥΛΙΚΟ'][0].lower() \
                  + ', της εταιρίας ' + product_info['brand'] + '. '
         descr_en = temp_categ[1].capitalize() + ' από ' + product_info['ΥΛΙΚΟ'][1].lower() \
                  + ', της εταιρίας ' + product_info['brand'] + '. '
 
     if "cufflink" in product_info['category_short']:
-        descr_el = 'Ανδρικά μανικετόκουμπα από ' + product_info['name_material'][0].lower() \
+        descr_el = 'Μανικετόκουμπα από ' + product_info['name_material'][0].lower() \
                  + ', από την εταιρία ' + product_info['brand'] + '. '
-        descr_en = 'Mens cufflinks made of ' + product_info['name_material'][1].lower() \
+        descr_en = 'Cufflinks made of ' + product_info['name_material'][1].lower() \
                  + ', by ' + product_info['brand'] + '. '
 
     if "gift set" in product_info['category_short']:
@@ -409,25 +417,55 @@ def add_status(product_info, wb):
 def add_image(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
+    alph = 'abcdefghijklmnopqrstuvwxyz'
     image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
-              + '/' + product_info["number"] + "a.jpg"
+              + '/' + product_info["number"] + ".jpg"
 
     # Write image directory
-    products_sheet['O' + str(row_num)] = image_dir
+    if int('0' + str(product_info['img count'])) == 0:
+        print(product_info['img count'] + ' is 0')
+        products_sheet['O' + str(row_num)] = 'catalog/product/placeholder.jpg'
+        return
 
-    # Extra image
+    if int(product_info['img count']) == 1:
+        products_sheet['O' + str(row_num)] = image_dir
+        return
+
+    products_sheet['O' + str(row_num)] = image_dir[:-4] + 'a.jpg'
+
+    # Extra images
     sheet = wb["AdditionalImages"]
-    sheet.append(['' for i in range(sheet.max_column)])
-    row = sheet.max_row 
 
+    for i in range(1, int(product_info['img count'])):
+        sheet.append(['' for i in range(sheet.max_column)])
+        row = sheet.max_row
+        last_product_id = products_sheet['A' + str(row_num - 1)].value
+        curr_product_id = last_product_id + 1
+        image_dir = image_dir[:-5] + alph[i] + ".jpg"
+        sheet['A' + str(row)] = curr_product_id
+        sheet['B' + str(row)] = image_dir
+        sheet['C' + str(row)] = i
+
+
+def add_discount(product_info, wb):
+    discount = int('0' + str(product_info['discount']).replace('-', ''))
+    price    = int(product_info['price'])
+    if discount == 0: return
+
+    products_sheet = wb['Products']
+    discounts_sheet = wb['Specials']
+    row = discounts_sheet.max_row + 1
+    row_num = products_sheet.max_row
     last_product_id = products_sheet['A' + str(row_num - 1)].value
     curr_product_id = last_product_id + 1
+    discounts_sheet.append(['' for i in range(discounts_sheet.max_column)])
 
-    image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
-              + '/' + product_info["number"] + "b.jpg"
-    sheet['A' + str(row)] = curr_product_id
-    sheet['B' + str(row)] = image_dir
-    sheet['C' + str(row)] = 1
+    discounts_sheet['A' + str(row)] = curr_product_id
+    discounts_sheet['B' + str(row)] = 'Default'
+    discounts_sheet['C' + str(row)] = '0'
+    discounts_sheet['D' + str(row)] = price*(1 - discount/100)
+    discounts_sheet['E' + str(row)] = '0000-00-00'
+    discounts_sheet['F' + str(row)] = '0000-00-00'
 
 
 def add_misc(product_info, wb):
@@ -482,9 +520,9 @@ if __name__ == '__main__':
         add_category(product, wb)
         add_status(product, wb)
         add_image(product, wb)
+        add_discount(product, wb)
         add_misc(product, wb)
         products_count += 1
-        wb.save(products_xlsx)
 
     # Cleanup and Save to file
     print("Added {} products.".format(products_count))

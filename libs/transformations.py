@@ -269,12 +269,16 @@ accessorys_gift_pack = {
     'no':  ['no',  'όχι', 0]    
 }
 
+accessorys_gender = {'women': ['Ladies', 'Γυναικείο', 0], # must search for 'women' first
+                     'men':   ['Gents',  'Ανδρικό',   0]}
+
 COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']                     = {}
 COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']['ΧΡΩΜΑ']            = accessorys_color
 COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']['ΥΛΙΚΟ']            = accessorys_material
 COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']['name_material']    = accessorys_material_name
 COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']['warranty']         = accessorys_warranty
 COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']['ΣΥΣΚΕΥΑΣΙΑ ΔΩΡΟΥ'] = accessorys_gift_pack
+COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']['gender']           = accessorys_gender
 
 COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ ΑΝΔΡΙΚΑ ΒΡΑΧΙΟΛΙΑ']          = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
 COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΣΤΥΛΟ ΠΕΝΕΣ']                 = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
