@@ -287,3 +287,6 @@ COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΔΕΡΜΑΤΙΝΕΣ ΘΗΚΕΣ ΓΙΑ Κ�
 COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΜΑΝΙΚΕΤΟΚΟΥΜΠΑ']              = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
 COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΣΕΤ ΔΩΡΩΝ']                   = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
 COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ ΑΝΔΡΙΚΑ ΚΟΛΙΕ-ΣΤΑΥΡΟΣ']      = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
+COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΚΛΕΙΔΟΘΗΚΕΣ']                 = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ'] 
+COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΧΡΗΜΑΤΟΠΙΑΣΤΡΕΣ']             = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ'] 
+COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΓΡΑΒΑΤΟΠΙΑΣΤΡΕΣ']             = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ'] 
