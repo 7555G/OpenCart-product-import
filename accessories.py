@@ -418,48 +418,69 @@ def add_image(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
     alph = 'abcdefghijklmnopqrstuvwxyz'
-    image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
-              + '/' + product_info["number"] + ".jpg"
 
     # Write image directory
     if int('0' + str(product_info['img count'])) == 0:
         print(product_info['img count'] + ' is 0')
-        products_sheet['O' + str(row_num)] = 'catalog/product/placeholder.jpg'
-        return
+        image_dir = 'catalog/product/placeholder.jpg'
+    elif int(product_info['img count']) == 1:
+        image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+                  + '/' + product_info["number"] + ".jpg"
+    else:
+        image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+                  + '/' + product_info["number"] + "a.jpg"
 
-    if int(product_info['img count']) == 1:
-        products_sheet['O' + str(row_num)] = image_dir
-        return
-
-    products_sheet['O' + str(row_num)] = image_dir[:-4] + 'a.jpg'
+    products_sheet['O' + str(row_num)] = image_dir
 
     # Extra images
     sheet = wb["AdditionalImages"]
+    last_product_id = products_sheet['A' + str(row_num - 1)].value
+    curr_product_id = last_product_id + 1
     img_count = int(product_info['img count'])
 
     for i in range(1, img_count):
         sheet.append(['' for i in range(sheet.max_column)])
         row = sheet.max_row
-        last_product_id = products_sheet['A' + str(row_num - 1)].value
-        curr_product_id = last_product_id + 1
         image_dir = image_dir[:-5] + alph[i] + ".jpg"
-        if i == img_count - 2:
-            if "pen" in product_info['category_short']:
-                image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
-                          + '/' + 'pen-box-open.jpg'
-        if i == img_count - 1:
-            if "bracelet" in product_info['category_short']:
-                image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
-                          + '/' + 'bracelet-box.jpg'
-            if "cufflink" in product_info['category_short']:
-                image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
-                          + '/' + 'cufflinks-box.jpg'
-            if "pen" in product_info['category_short']:
-                image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
-                          + '/' + 'pen-box.jpg'
         sheet['A' + str(row)] = curr_product_id
         sheet['B' + str(row)] = image_dir
         sheet['C' + str(row)] = i
+
+    # Add category-specific images
+    if "bracelet" in product_info['category_short']:
+        sheet.append(['' for i in range(sheet.max_column)])
+        row = sheet.max_row
+        image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+                  + '/' + 'bracelet-box.jpg'
+        sheet['A' + str(row)] = curr_product_id
+        sheet['B' + str(row)] = image_dir
+        sheet['C' + str(row)] = 1
+
+    if "cufflink" in product_info['category_short']:
+        sheet.append(['' for i in range(sheet.max_column)])
+        row = sheet.max_row
+        image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+                  + '/' + 'cufflinks-box.jpg'
+        sheet['A' + str(row)] = curr_product_id
+        sheet['B' + str(row)] = image_dir
+        sheet['C' + str(row)] = 1
+
+    if product_info['category_short'] == "pen":
+        sheet.append(['' for i in range(sheet.max_column)])
+        row = sheet.max_row
+        image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+                  + '/' + 'pen-box-open.jpg'
+        sheet['A' + str(row)] = curr_product_id
+        sheet['B' + str(row)] = image_dir
+        sheet['C' + str(row)] = 1
+
+        sheet.append(['' for i in range(sheet.max_column)])
+        row = sheet.max_row
+        image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+                  + '/' + 'pen-box.jpg'
+        sheet['A' + str(row)] = curr_product_id
+        sheet['B' + str(row)] = image_dir
+        sheet['C' + str(row)] = 2
 
 
 def add_discount(product_info, wb):
@@ -526,7 +547,6 @@ if __name__ == '__main__':
         if not product["category"]: continue
         add_empty_product(product, wb)
         add_attributes(product, wb)
-        pprint(product)
         add_product_name_and_meta_title(product, wb)
         add_description(product, wb)
         add_SEO(product, wb)
