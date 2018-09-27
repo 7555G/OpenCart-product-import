@@ -435,13 +435,28 @@ def add_image(product_info, wb):
 
     # Extra images
     sheet = wb["AdditionalImages"]
+    img_count = int(product_info['img count'])
 
-    for i in range(1, int(product_info['img count'])):
+    for i in range(1, img_count):
         sheet.append(['' for i in range(sheet.max_column)])
         row = sheet.max_row
         last_product_id = products_sheet['A' + str(row_num - 1)].value
         curr_product_id = last_product_id + 1
         image_dir = image_dir[:-5] + alph[i] + ".jpg"
+        if i == img_count - 2:
+            if "pen" in product_info['category_short']:
+                image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+                          + '/' + 'pen-box-open.jpg'
+        if i == img_count - 1:
+            if "bracelet" in product_info['category_short']:
+                image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+                          + '/' + 'bracelet-box.jpg'
+            if "cufflink" in product_info['category_short']:
+                image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+                          + '/' + 'cufflinks-box.jpg'
+            if "pen" in product_info['category_short']:
+                image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+                          + '/' + 'pen-box.jpg'
         sheet['A' + str(row)] = curr_product_id
         sheet['B' + str(row)] = image_dir
         sheet['C' + str(row)] = i
