@@ -526,6 +526,7 @@ if __name__ == '__main__':
         if not product["category"]: continue
         add_empty_product(product, wb)
         add_attributes(product, wb)
+        pprint(product)
         add_product_name_and_meta_title(product, wb)
         add_description(product, wb)
         add_SEO(product, wb)
