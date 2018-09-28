@@ -274,6 +274,24 @@ def add_product_name_and_meta_title(product_info, wb):
                      + product_info['name_material'][1].title() \
                      + ' Gift Set' + model
 
+    if "key holder" in product_info['category_short']:
+        title_el = product_info['brand'] + ' Κλειδοθήκη από ' \
+                 + product_info['ΥΛΙΚΟ'][0].title() + model
+        title_en = product_info['brand'] + ' Key holder made of ' \
+                 + product_info['ΥΛΙΚΟ'][1].title() + model
+
+    if "money clip" in product_info['category_short']:
+        title_el = product_info['brand'] + ' Χρηματοπιάστρα από ' \
+                 + product_info['ΥΛΙΚΟ'][0].title() + model
+        title_en = product_info['brand'] + ' Money Clip made of ' \
+                 + product_info['ΥΛΙΚΟ'][1].title() + model
+
+    if "tiebar" in product_info['category_short']:
+        title_el = product_info['brand'] + ' Γραβατοπιάστρα από ' \
+                 + product_info['name_material'][0].title() + model
+        title_en = product_info['brand'] + ' Tiebar made of ' \
+                 + product_info['name_material'][1].title() + model
+
     meta_title_el = title_el + ' | Eurotimer'
     meta_title_en = title_en + ' | Eurotimer'
 
@@ -354,6 +372,24 @@ def add_description(product_info, wb):
                      + ' σετ δώρων, από την εταιρία ' + product_info['brand'] + '. '
             descr_en = color[1].capitalize() + product_info['name_material'][1].lower() \
                      + 'gift set, by ' + product_info['brand'] + '. '
+
+    if "key holder" in product_info['category_short']:
+        descr_el = product_info['brand'] + ' Κλειδοθήκη από ' \
+                 + product_info['ΥΛΙΚΟ'][0].lower()
+        descr_en = product_info['brand'] + ' Key holder made of ' \
+                 + product_info['ΥΛΙΚΟ'][1].lower()
+
+    if "money clip" in product_info['category_short']:
+        descr_el = product_info['brand'] + ' Χρηματοπιάστρα από ' \
+                 + product_info['ΥΛΙΚΟ'][0].lower()
+        descr_en = product_info['brand'] + ' Money Clip made of ' \
+                 + product_info['ΥΛΙΚΟ'][1].lower()
+
+    if "tiebar" in product_info['category_short']:
+        descr_el = product_info['brand'] + ' Γραβατοπιάστρα από ' \
+                 + product_info['name_material'][0].lower()
+        descr_en = product_info['brand'] + ' Tiebar made of ' \
+                 + product_info['name_material'][1].lower()
 
     if product_info['info gr']:
         descr_el += product_info['info gr']
