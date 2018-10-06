@@ -13,7 +13,6 @@ from libs.utilities import *
 MANUFACTURER = "Jos Von Arx"
 CATEGORY = "STRAPS>MAURICE LACROIX"
 
-
 def cleanup(wb):
     products_sheet = wb['Products']
     products_sheet.append(['' for i in range(products_sheet.max_column)])
@@ -21,7 +20,6 @@ def cleanup(wb):
 
     # print("Row to clean is: ", row_num)
     products_sheet.delete_rows(row_num)
-
 
 def open_product_attributes(input_file):
     # The tsv will be converted to a list of dictionaries
@@ -37,7 +35,6 @@ def open_product_attributes(input_file):
             attrs_dicts[prod_ind][attr_names[i]] = new_attrs[prod_ind][i]
     
     return attrs_dicts
-
 
 def load_pickle_obj(file):
     import pickle
@@ -58,7 +55,6 @@ def add_empty_product(product_info, wb):
     
     print("Insert new product with ID {} in row {} with Model: {}".format( \
         curr_product_id, row_num, product_info["number"]))
-
 
 def process_attr_data(product, attr_grp):
     for attr in COLUMN_TRANSF_RULES[attr_grp]:
@@ -134,13 +130,11 @@ def process_attr_data(product, attr_grp):
 
     return product        
 
-
 def static_pre_processing(product_info, attr_grp):
     # Apply rules to the data before inserting it
     product_info['name_material'] = product_info['ΥΛΙΚΟ']
 
     return product_info
-
 
 def static_post_processing(product_info, attr_grp):  
     product_info['ΠΛΗΡΟΦΟΡΙΕΣ'] = ['', '']
@@ -156,7 +150,6 @@ def static_post_processing(product_info, attr_grp):
     product_info['category_short'] = product_info['category'].split('>')[-1].lower()[:-1]
 
     return product_info
-
 
 def add_attributes(product_info, wb):
     products_sheet = wb['Products']
@@ -195,7 +188,6 @@ def add_attributes(product_info, wb):
             attributes_sheet['D' + str(attr_row_num + i)] = ''
             attributes_sheet['E' + str(attr_row_num + i)] = ''
         i += 1
-
 
 def add_product_name_and_meta_title(product_info, wb):
     products_sheet = wb['Products']
@@ -303,7 +295,6 @@ def add_product_name_and_meta_title(product_info, wb):
     products_sheet['AG' + str(row_num)] = meta_title_el
     products_sheet['AH' + str(row_num)] = meta_title_en
 
-
 def add_description(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
@@ -406,7 +397,6 @@ def add_description(product_info, wb):
     products_sheet['AI' + str(row_num)] = meta_descr_el
     products_sheet['AJ' + str(row_num)] = meta_descr_en
 
-
 def add_SEO(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
@@ -416,7 +406,6 @@ def add_SEO(product_info, wb):
 
     # Write SEO
     products_sheet['AD' + str(row_num)] = SEO
-
 
 def add_model(product_info, wb):
     products_sheet = wb['Products']
@@ -431,7 +420,6 @@ def add_model(product_info, wb):
     # Write model
     products_sheet['M' + str(row_num)] = model
 
-
 def add_price(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
@@ -441,7 +429,6 @@ def add_price(product_info, wb):
 
     # Write price
     products_sheet['Q' + str(row_num)] = price
-
 
 def add_manufacturer(product_info, wb):
     products_sheet = wb['Products']
@@ -454,7 +441,6 @@ def add_manufacturer(product_info, wb):
 
     # Write manufacturer
     products_sheet['N' + str(row_num)] = manuf
-
 
 def add_category(product_info, wb):
     products_sheet = wb['Products']
@@ -477,7 +463,6 @@ def add_category(product_info, wb):
     # Write category number
     products_sheet['D' + str(row_num)] = categ_val
 
-
 def add_status(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
@@ -486,7 +471,6 @@ def add_status(product_info, wb):
         products_sheet['AB' + str(row_num)] = 'true'
     else:
         products_sheet['AB' + str(row_num)] = 'false'
-
 
 def add_image(product_info, wb):
     products_sheet = wb['Products']
@@ -556,11 +540,10 @@ def add_image(product_info, wb):
         sheet['B' + str(row)] = image_dir
         sheet['C' + str(row)] = 2
 
-
 def add_discount(product_info, wb):
     discount = int('0' + str(product_info['discount']).replace('-', ''))
-    price    = int(product_info['price'])
     if discount == 0: return
+    price    = int(product_info['price'])
 
     products_sheet = wb['Products']
     discounts_sheet = wb['Specials']

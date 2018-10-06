@@ -352,7 +352,7 @@ def add_image(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
     alph = 'abcdefghijklmnopqrstuvwxyz'
-    image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+    image_dir = 'catalog/product/' + CATEGORY.replace('>', '/') \
               + '/' + product_info["number"] + ".jpg"
 
     # Write image directory
@@ -375,7 +375,7 @@ def add_image(product_info, wb):
         row = sheet.max_row
         last_product_id = products_sheet['A' + str(row_num - 1)].value
         curr_product_id = last_product_id + 1
-        image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+        image_dir = 'catalog/product/' + CATEGORY.replace('>', '/') \
                   + '/' + product_info["number"] + alph[i] + ".jpg"
         sheet['A' + str(row)] = curr_product_id
         sheet['B' + str(row)] = image_dir
@@ -383,8 +383,8 @@ def add_image(product_info, wb):
 
 def add_discount(product_info, wb):
     discount = int('0' + str(product_info['discount']).replace('-', ''))
-    price    = int(product_info['price'])
     if discount == 0: return
+    price    = int(product_info['price'])
 
     products_sheet = wb['Products']
     discounts_sheet = wb['Specials']

@@ -9,6 +9,7 @@ from libs.color import get_color
 from libs.utilities import *
 
 MANUFACTURER = "Maurice Lacroix"
+CATEG = "WATCHES>WATCH SPARE PARTS"
 
 
 def cleanup(wb):
@@ -193,7 +194,7 @@ def add_attributes(product_info, wb):
 
     (categories_to_attribute, __, attributes_dict) = load_pickle_obj('pkl_files/attributes.pkl')
     
-    attr_grp = categories_to_attribute["WATCHES>WATCH SPARE PARTS"]
+    attr_grp = categories_to_attribute[CATEG]
     attributes = attributes_dict[attr_grp]
 
     last_product_id = products_sheet['A' + str(row_num - 1)].value
@@ -317,7 +318,7 @@ def add_category(product_info, wb):
     categories_dict = load_pickle_obj('pkl_files/categories.pkl')
 
     # Find category number from dictionary
-    categ = closest_match("WATCHES>WATCH SPARE PARTS", categories_dict)
+    categ = closest_match(CATEG, categories_dict)
 
     # Also add the parent categories
     broken_category = categ.split(">")
@@ -344,12 +345,12 @@ def add_image(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
     alph = 'abcdefghijklmnopqrstuvwxyz'
-    image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+    image_dir = 'catalog/product/' + CATEG.replace('>', '/') \
               + '/' + product_info["number"] + ".jpg"
 
     # Write image directory
     if int('0' + str(product_info['img count'])) == 0:
-        print(product_info['img count'] + ' is 0')
+        # print(product_info['img count'] + ' is 0')
         products_sheet['O' + str(row_num)] = 'catalog/product/placeholder.jpg'
         return
 
@@ -367,7 +368,7 @@ def add_image(product_info, wb):
         row = sheet.max_row
         last_product_id = products_sheet['A' + str(row_num - 1)].value
         curr_product_id = last_product_id + 1
-        image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
+        image_dir = 'catalog/product/' + CATEG.replace('>', '/') \
                   + '/' + product_info["number"] + alph[i] + ".jpg"
         sheet['A' + str(row)] = curr_product_id
         sheet['B' + str(row)] = image_dir
@@ -375,8 +376,8 @@ def add_image(product_info, wb):
 
 def add_discount(product_info, wb):
     discount = int('0' + str(product_info['discount']).replace('-', ''))
-    price    = int(product_info['price'])
     if discount == 0: return
+    price    = int(product_info['price'])
 
     products_sheet = wb['Products']
     discounts_sheet = wb['Specials']
