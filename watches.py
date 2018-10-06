@@ -16,8 +16,10 @@ COLLEC_INDX = 3
 FAMILY_INDX = 4
 GENDER_INDX = 5
 PRICE_INDX  = 6
-QUANT_INDX  = 7
-HIDDN_INDX  = 8
+DISC_INDX   = 7
+QUANT_INDX  = 8
+HIDDN_INDX  = 9
+IMG_INDX    = 10
 
 MANUFACTURER = ['Chronoswiss',
                 'Fortis',
@@ -482,14 +484,57 @@ def add_status(product_info, wd):
 def add_image(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
-
+    alph = 'abcdefghijklmnopqrstuvwxyz'
+    
     # Define image directory
     model = product_info[MODEL_INDX]
     categ_dir = product_info[CATEG_INDX].replace('>', '/')
-    image_dir = 'catalog/product/' + categ_dir + '/' + model + '.jpg'
+    image_dir = 'catalog/product/' + categ_dir + '/' + model + '.jpg
 
     # Write image directory
-    products_sheet['O' + str(row_num)] = image_dir
+    if int('0' + str(product_info[IMG_INDX])) == 0:
+        print(product_info[IMG_INDX] + ' is 0')
+        products_sheet['O' + str(row_num)] = 'catalog/product/placeholder.jpg'
+        return
+
+    if int(product_info[IMG_INDX]) == 1:
+        products_sheet['O' + str(row_num)] = image_dir
+        return
+
+    products_sheet['O' + str(row_num)] = image_dir[:-4] + 'a.jpg'
+
+    # Extra images
+    sheet = wb["AdditionalImages"]
+
+    for i in range(1, int(product_info[IMG_INDX])):
+        sheet.append(['' for i in range(sheet.max_column)])
+        row = sheet.max_row
+        last_product_id = products_sheet['A' + str(row_num - 1)].value
+        curr_product_id = last_product_id + 1
+        image_dir = image_dir[:-5] + alph[i] + ".jpg
+        sheet['A' + str(row)] = curr_product_id
+        sheet['B' + str(row)] = image_dir
+        sheet['C' + str(row)] = i
+
+def add_discount(product_info, wb):
+    discount = int('0' + str(product_info[DISC_INDX]).replace('-', ''))
+    price    = int(product_info['price'])
+    if discount == 0: return
+
+    products_sheet = wb['Products']
+    discounts_sheet = wb['Specials']
+    row = discounts_sheet.max_row + 1
+    row_num = products_sheet.max_row
+    last_product_id = products_sheet['A' + str(row_num - 1)].value
+    curr_product_id = last_product_id + 1
+    discounts_sheet.append(['' for i in range(discounts_sheet.max_column)])
+
+    discounts_sheet['A' + str(row)] = curr_product_id
+    discounts_sheet['B' + str(row)] = 'Default'
+    discounts_sheet['C' + str(row)] = '0'
+    discounts_sheet['D' + str(row)] = price*(1 - discount/100)
+    discounts_sheet['E' + str(row)] = '0000-00-00'
+    discounts_sheet['F' + str(row)] = '0000-00-00'
 
 def add_misc(product_info, wb):
     products_sheet = wb['Products']
@@ -543,6 +588,7 @@ if __name__ == '__main__':
         add_manufacturer(product, wb)
         add_category(product, wb)
         add_image(product, wb)
+        add_discount(product, wb)
         add_status(product, wb)
         add_misc(product, wb)
         products += 1
