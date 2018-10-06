@@ -31,7 +31,8 @@ COLORS = {
     'burgundy': ['burgundy', 'burgundy'],
     'burgund': ['burgundy', 'burgundy'],
     'cognac':   ['καφέ', 'καφέ'],
-    'chestnut': ['ανοιχτή καφέ', 'ανοιχτό καφέ']
+    'chestnut': ['ανοιχτή καφέ', 'ανοιχτό καφέ'],
+    'olive':       ['λαδί',         'λαδί']
     }
 
 # __color0, __color1
