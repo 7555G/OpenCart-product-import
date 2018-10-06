@@ -237,24 +237,29 @@ COLUMN_TRANSF_RULES['ΛΟΥΡΑΚΙΑ']['name material'] = straps_material_names
 # ΚΟΣΜΗΜΑΤΑ/ΑΞΕΣΟΥΑΡ (JOS VON ARX)
 
 accessorys_color = {
-    "__color1": ['__color', '__color', 0],
+     "__color1": ['__color', '__color', 0],
     " ":        ["__clear", "__clear", 0]
 }
 
 accessorys_material = {
-    'italian bovine leather':       ['genuine italian bovine leather,', 'αυθεντικό ιταλικό δέρμα,',   0],
-    'italian leather':              ['genuine italian leather,',        'αυθεντικό ιταλικό δέρμα,',   0],
-    'leather':                      ['leather,',                        'δέρμα,',                     0],
-    'solid brass with pvd plating': ['solid brass with pvd plating',    'επιπλατινωμένος ορείχαλκος', 1],
-    'solid brass':                  ['solid brass',                     'ορείχαλκος',                 1],
-    'steel':                        ['stainless steel',                 'ανοξείδωτο ατσάλι',          1],
-    's.s':                          ['stainless steel',                 'ανοξείδωτο ατσάλι',          1],
-    'PVD __color0':                 ['PVD __color,',                    'με __color επίστρωση,',      2]
+    'italian bovine leather': ['genuine italian bovine leather,',   'αυθεντικό ιταλικό δέρμα,',         0],
+    'italian leather':        ['genuine italian leather,',          'αυθεντικό ιταλικό δέρμα,',         0],
+    'leather':                ['leather,',                          'δέρμα,',                           0],
+    'solid brass gold PVD':   ['solid brass with gold PVD plating', 'επίχρυσος ορείχαλκος',             1],
+    'solid brass PVD':        ['solid brass with PVD plating',      'επιπλατινωμένος ορείχαλκος',       1],
+    'solid brass':            ['solid brass',                       'ορείχαλκος',                       1],
+    'steel':                  ['stainless steel',                   'ανοξείδωτο ατσάλι',                1],
+    's.s':                    ['stainless steel',                   'ανοξείδωτο ατσάλι',                1],
+    'PVD black rose gold':    ['PVD black and rose gold',           'με μαύρη και ρωζ χρησή επίστρωση', 2],
+    'PVD __color0':           ['PVD __color',                       'με __color επίστρωση',             2]
 }
 
+accessorys_material_name = accessorys_material
 accessorys_material_name = {
-    'leather':                      ['leather',                      'δερμάτινο',                1],
-    'solid brass with pvd plating': ['solid brass with PVD plating', 'επιπλατινωμένο ορείχαλκο', 1]
+    'leather':              ['leather',                           'δερμάτινο',                0],
+    'solid brass gold PVD': ['solid brass with gold PVD plating', 'επίχρυσο ορείχαλκο',       0],
+    'solid brass PVD':      ['solid brass with PVD plating',      'επιπλατινωμένο ορείχαλκο', 0],
+    'solid brass':          ['solid brass',                       'ορείχαλκο',                0]
 }
 
 accessorys_warranty = {
@@ -269,17 +274,24 @@ accessorys_gift_pack = {
     'no':  ['no',  'όχι', 0]    
 }
 
+accessorys_gender = {'women': ['Ladies', 'Γυναικείο', 0], # must search for 'women' first
+                     'men':   ['Gents',  'Ανδρικό',   0]}
+
 COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']                     = {}
 COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']['ΧΡΩΜΑ']            = accessorys_color
 COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']['ΥΛΙΚΟ']            = accessorys_material
 COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']['name_material']    = accessorys_material_name
-COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']['warranty']         = accessorys_warranty
+COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']['ΕΓΓΥΗΣΗ']          = accessorys_warranty
 COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']['ΣΥΣΚΕΥΑΣΙΑ ΔΩΡΟΥ'] = accessorys_gift_pack
+COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']['gender']           = accessorys_gender
 
 COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ ΑΝΔΡΙΚΑ ΒΡΑΧΙΟΛΙΑ']          = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
+COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ ΑΝΔΡΙΚΑ ΚΟΛΙΕ-ΣΤΑΥΡΟΣ']      = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
 COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΣΤΥΛΟ ΠΕΝΕΣ']                 = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
 COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΔΕΡΜΑΤΙΝΑ ΠΟΡΤΟΦΟΛΙΑ']        = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
 COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΔΕΡΜΑΤΙΝΕΣ ΘΗΚΕΣ ΓΙΑ ΚΑΡΤΕΣ'] = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
 COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΜΑΝΙΚΕΤΟΚΟΥΜΠΑ']              = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
 COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΣΕΤ ΔΩΡΩΝ']                   = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
-COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ ΑΝΔΡΙΚΑ ΚΟΛΙΕ-ΣΤΑΥΡΟΣ']      = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
+COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΚΛΕΙΔΟΘΗΚΕΣ']                 = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
+COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΧΡΗΜΑΤΟΠΙΑΣΤΡΕΣ']             = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']
+COLUMN_TRANSF_RULES['ΑΞΕΣΟΥΑΡ ΓΡΑΒΑΤΟΠΙΑΣΤΡΕΣ']             = COLUMN_TRANSF_RULES['ΚΟΣΜΗΜΑΤΑ']

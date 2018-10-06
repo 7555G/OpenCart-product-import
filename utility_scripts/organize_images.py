@@ -7,7 +7,7 @@ from PIL import Image
 if __name__ == "__main__":
     from shutil import copyfile
 
-    if len(argv) < 3:
+    if len(argv) < 4:
         print("Need 3 args. 1: xlsx file, 2: photos search dir, 3: output dir")
         exit()
 
