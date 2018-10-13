@@ -100,9 +100,10 @@ def process_attr_data(product, attr_grp):
 
 def static_pre_processing(product_info, attr_grp):
     # Apply rules to the data before inserting it
-
     product_info['ΥΛΙΚΟ'] = product_info['strap material']
     product_info['ΧΡΩΜΑ'] = product_info['strap color']
+
+    product_info['name material'] = product_info['strap material']
 
     return product_info
 
@@ -351,7 +352,7 @@ def add_image(product_info, wb):
 
     # Write image directory
     if int('0' + str(product_info['img count'])) == 0:
-        print(product_info['img count'] + ' is 0')
+        print(product_info['img count'] + '(img count is 0)')
         products_sheet['O' + str(row_num)] = 'catalog/product/placeholder.jpg'
         return
 
@@ -395,27 +396,6 @@ def add_discount(product_info, wb):
     discounts_sheet['E' + str(row)] = '0000-00-00'
     discounts_sheet['F' + str(row)] = '0000-00-00'
 
-def add_discount(product_info, wb):
-    num = product_info['number']
-    if num not in DISCOUNTS: return
-    
-    # Get Product ID
-    products_sheet = wb['Products']
-    row_num = products_sheet.max_row
-    last_product_id = products_sheet['A' + str(row_num - 1)].value
-    curr_product_id = last_product_id + 1
-
-    sheet = wb["Specials"]
-    sheet.append(['' for i in range(sheet.max_column)])
-    row = sheet.max_row 
-
-    sheet['A' + str(row)] = curr_product_id
-    sheet['B' + str(row)] = "Default"
-    sheet['C' + str(row)] = 0
-    sheet['D' + str(row)] = float(product_info['price']) * (1 - DISCOUNTS[num])
-    sheet['E' + str(row)] = '2018-09-11'
-    sheet['F' + str(row)] = '2019-09-11'
-
 def add_misc(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
@@ -455,7 +435,6 @@ if __name__ == '__main__':
     
     # Iterate the inputs
     for product in new_products:
-        if not product["type"]: continue
         add_empty_product(product, wb)
         add_attributes(product, wb)
         add_product_name(product, wb)

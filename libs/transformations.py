@@ -171,12 +171,14 @@ straps_material = {
     # " ":            ['__stop', '__stop', 1],
     "lizard":       ['lizard leather', 'δέρμα σαύρας', 1],
     "CAOUTCHOUC":   ['Rubber', 'Καουτσούκ', 1],
+    "rubber":       ['Rubber', 'Καουτσούκ', 1],
     "ostrich":      ['ostrich leather', 'δέρμα στρουθοκάμηλου', 1],
     "toro":         ['toro', 'toro', 1],
     "galant":       ['galant', 'galant', 1],
     "calf":         ['calf', 'calf', 1],
     "nato":         ['nato', 'νατο', 1],
-    "ravenna":       ['ravenna', 'δερμάτινο ραβένα', 1],
+    "ravenna":      ['ravenna', 'δερμάτινο ραβένα', 1],
+    "leather":      ['leather', 'δέρμα', 1],
     # " ":            ['__stop', '__stop', 3],
     "bracelet":     ['stainless steel','ανοξείδωτο ατσάλι', 1],
     "yellow gold plated steel": ["Yellow gold plated steel", "Ανοξείδωτο ατσάλι με χρυσή επίστρωση", 1],
@@ -191,7 +193,7 @@ COLUMN_TRANSF_RULES['ΛΟΥΡΑΚΙΑ']['ΔΙΑΣΤΑΣΕΙΣ'] = {}
 
 # Extra
 straps_type = {
-    'bracelet':   ['bracelet ', 'μπρασελέ από', 0],
+    'bracelet':   ['bracelet ', 'μπρασελέ από ', 0],
     'strap':      ['strap ','λουράκι από ', 0]
 }
 
@@ -213,12 +215,14 @@ straps_material_names = {
     # " ":            ['__stop', '__stop', 1],
     "lizard":       ['lizard', 'δέρμα Σαύρας', 1],
     "CAOUTCHOUC":   ['Rubber', 'Καουτσούκ', 1],
+    "rubber":       ['Rubber', 'Καουτσούκ', 1],
     "ostrich":      ['ostrich', 'δέρμα Στρουθοκάμηλου', 1],
     "toro":         ['toro', 'δέρμα Toro', 1],
     "galant":       ['galant', 'δέρμα Galant', 1],
     "calf":         ['calf', 'δέρμα Calf', 1],
     "nato":         ['nato', 'Νατο', 1],
     "ravenna":       ['ravenna', 'δερμάτινο Ραβένα', 1],
+    "leather":      ['leather', 'δέρμα', 1],
     # " ":            ['__stop', '__stop', 3],
     'gold plated':  ['gold plated steel', 'επιχρυσωμένο ατσάλι',1],
     'STEEL':        ['steel','ατσάλι', 1],
