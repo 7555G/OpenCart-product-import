@@ -12,6 +12,7 @@ from libs.utilities import *
 # Maurice Laxroix Strap|Bracelet Color Material Buckle Info Number : Site 
 MANUFACTURER = "Maurice Lacroix"
 CATEGORY = "STRAPS>MAURICE LACROIX"
+OFFER_CATEG = "OFFERS>STRAPS"
 DISCOUNTS = {
     "449-000020": 0.15,
     "450-000332": 0.15, 
@@ -337,6 +338,11 @@ def add_category(product_info, wb):
 
 
     # Write category number
+    discount = int('0' + str(product_info['discount']).replace('-', ''))
+    if discount != 0:
+        categ_val += "," + str( categories_dict["OFFERS"])
+        categ_val += "," + str( categories_dict[OFFER_CATEG])
+
     products_sheet['D' + str(row_num)] = categ_val
 
 def add_status(product_info, wb):

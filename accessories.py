@@ -12,6 +12,7 @@ from libs.utilities import *
 # Maurice Laxroix Strap|Bracelet Color Material Buckle Info Number : Site 
 MANUFACTURER = "Jos Von Arx"
 CATEGORY = "STRAPS>MAURICE LACROIX"
+OFFER_CATEG = "OFFERS>ACCESSORIES"
 
 def cleanup(wb):
     products_sheet = wb['Products']
@@ -459,8 +460,12 @@ def add_category(product_info, wb):
         parent_categ = parent_categ + '>' + broken_category[i]
         categ_val += "," + str( categories_dict[parent_categ] )
 
-
     # Write category number
+    discount = int('0' + str(product_info['discount']).replace('-', ''))
+    if discount != 0:
+        categ_val += "," + str( categories_dict["OFFERS"])
+        categ_val += "," + str( categories_dict[OFFER_CATEG])
+
     products_sheet['D' + str(row_num)] = categ_val
 
 def add_status(product_info, wb):

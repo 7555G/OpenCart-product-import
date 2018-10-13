@@ -10,6 +10,7 @@ from libs.utilities import *
 
 MANUFACTURER = "Maurice Lacroix"
 CATEG = "WATCHES>WATCH SPARE PARTS"
+OFFER_CATEG = "OFFERS>WATCH SPARE PARTS"
 
 
 def cleanup(wb):
@@ -328,8 +329,12 @@ def add_category(product_info, wb):
         parent_categ = parent_categ + '>' + broken_category[i]
         categ_val += "," + str( categories_dict[parent_categ] )
 
-
     # Write category number
+    discount = int('0' + str(product_info['discount']).replace('-', ''))
+    if discount != 0:
+        categ_val += "," + str( categories_dict["OFFERS"])
+        categ_val += "," + str( categories_dict[OFFER_CATEG])
+
     products_sheet['D' + str(row_num)] = categ_val
 
 def add_status(product_info, wb):
