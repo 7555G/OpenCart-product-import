@@ -1,4 +1,6 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from distance import levenshtein    
 
 def replace_chars(chars_string, the_string, new_char=""):

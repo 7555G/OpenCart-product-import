@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 COLUMN_TRANSF_RULES = {}    # { 'ΚΑΣΑ': {'S.STEEL':'Ατσαλι'}}
 
@@ -190,8 +191,8 @@ COLUMN_TRANSF_RULES['ΛΟΥΡΑΚΙΑ']['ΔΙΑΣΤΑΣΕΙΣ'] = {}
 
 # Extra
 straps_type = {
-    'bracelet':   ['bracelet ', 'μπρασελέ ', 0],
-    ' ':          ['strap ','λουράκι από ', 0]
+    'bracelet':   ['bracelet ', 'μπρασελέ από', 0],
+    'strap':      ['strap ','λουράκι από ', 0]
 }
 
 straps_clasp_type = {

@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from sys import argv
 from pprint import pprint
@@ -13,11 +14,6 @@ from libs.utilities import *
 MANUFACTURER = "Maurice Lacroix"
 CATEGORY = "STRAPS>MAURICE LACROIX"
 OFFER_CATEG = "OFFERS>STRAPS"
-DISCOUNTS = {
-    "449-000020": 0.15,
-    "450-000332": 0.15, 
-    "449-000025": 0.15, 
-}
 
 
 def cleanup(wb):
@@ -107,15 +103,7 @@ def static_pre_processing(product_info, attr_grp):
 
     product_info['ΥΛΙΚΟ'] = product_info['strap material']
     product_info['ΧΡΩΜΑ'] = product_info['strap color']
-    
-    # dim = product_info['name'].split("mm")[0].split()[-1]
-    # product_info['ΔΙΑΣΤΑΣΕΙΣ'] = dim + "mm"
 
-    # Fix the name
-    nm = product_info['name'].replace("BRACELET ","")
-    product_info['name'] = nm
-    product_info['name material'] = product_info['strap material']
-    product_info['strap type'] = product_info['name']
     return product_info
 
 def static_post_processing(product_info, attr_grp):  

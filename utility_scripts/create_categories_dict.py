@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 from openpyxl import Workbook, load_workbook
 from pprint import pprint
