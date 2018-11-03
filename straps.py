@@ -233,10 +233,13 @@ def add_product_name(product_info, wb):
     row_num = products_sheet.max_row
 
     # Create product name
-    nm = product_info["base"] 
-    title_en = nm[0] + ", " + product_info['etc']
-    title_el = nm [1] + ", " + product_info['etc']
+    title_en = product_info["base"][0]
+    title_el = product_info["base"][1]
 
+    if product_info['etc']:
+        title_en += ", " + product_info['etc']
+        title_el += ", " + product_info['etc']
+    
     # Write product name
     products_sheet['B' + str(row_num)] = title_el
     products_sheet['C' + str(row_num)] = title_en
