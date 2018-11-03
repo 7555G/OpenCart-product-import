@@ -110,7 +110,6 @@ def process_attr_data(product, attr_grp):
     return product        
 
 def static_pre_processing(product_info, attribute_info, attr_grp):
-
     # Apply rules to the data before inserting it
     attribute_info['ΣΥΛΛΟΓΗ'] = product_info[COLLEC_INDX] + ' ' + product_info[FAMILY_INDX]
     if attribute_info['ΔΙΑΜΕΤΡΟΣ ΚΑΣΑΣ'] != "":
@@ -121,7 +120,6 @@ def static_pre_processing(product_info, attribute_info, attr_grp):
     return attribute_info
 
 def static_post_processing(product_info, attribute_info, attr_grp):
-
     # ΔΕΣΙΜΟ
     if attribute_info['ΔΕΣΙΜΟ'] == ["",""]:
         return attribute_info
@@ -210,7 +208,6 @@ def load_pickle_obj(file):
 
     with open(file, 'rb') as f:
         return pickle.load(f)
-
 
 # XLSX modifier functions
 def add_empty_product(product_info, wb):
@@ -557,7 +554,6 @@ def add_filters(product_info, attributes, wb):
         filters_sheet['C' + str(row+1)] = "Μπρασελέ"
     else:
         filters_sheet['C' + str(row+1)] = "Λουράκι"
-
 
 def add_misc(product_info, wb):
     products_sheet = wb['Products']

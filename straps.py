@@ -11,10 +11,19 @@ from libs.utilities import *
 
 # Maurice Laxroix Strap|Bracelet Color Material Info Number : Google
 # Maurice Laxroix Strap|Bracelet Color Material Buckle Info Number : Site 
-MANUFACTURER = "Maurice Lacroix"
-CATEGORY = "STRAPS>MAURICE LACROIX"
 OFFER_CATEG = "OFFERS>STRAPS"
-
+FILTER_COLORS = ["λευκό", 
+                 "μαύρο",
+                 "κόκκινο",
+                 "πράσινο",
+                 "μπλε",
+                 "κίτρινο",
+                 "πορτοκαλί",
+                 "καφέ",
+                 "μωβ",
+                 "ρωζ",
+                 "γκρι"]
+ 
 
 def cleanup(wb):
     products_sheet = wb['Products']
@@ -119,13 +128,14 @@ def static_post_processing(product_info, attr_grp):
 
     # Maurice Laxroix Strap|Bracelet Color Material
     product_info['base'] = ['','']
-    product_info['base'][1] = "Maurice Lacroix "+product_info['strap type'][0]
-    product_info['base'][0] = "Maurice Lacroix "+product_info['strap type'][1]
+    product_info['base'][1] = product_info['brand'] + " " + product_info['strap type'][0]
+    product_info['base'][0] = product_info['brand'] + " " + product_info['strap type'][1]
     if product_info['ΧΡΩΜΑ'][1]: 
         product_info['base'][1] += product_info['ΧΡΩΜΑ'][0].title() + " "
         product_info['base'][0] += product_info['ΧΡΩΜΑ'][1].title() + " "
     product_info['base'][1] += product_info['name material'][0].title()
     product_info['base'][0] += product_info['name material'][1].title()
+    product_info['category'] = "STRAPS>" + product_info['brand'].upper()
 
     # if "BRACELET" in product_info['type']
     # if product_info['ΧΡΩΜΑ'][0]:
@@ -301,7 +311,7 @@ def add_manufacturer(product_info, wb):
     row_num = products_sheet.max_row
 
     # Check manufacturer
-    manuf = 'Maurice Lacroix'
+    manuf = product_info['brand']
     if manuf == '':
         print('Warning: invalid manufacturer name!')
 
@@ -314,7 +324,7 @@ def add_category(product_info, wb):
     categories_dict = load_pickle_obj('pkl_files/categories.pkl')
 
     # Find category number from dictionary
-    categ = closest_match(CATEGORY, categories_dict)
+    categ = closest_match(product_info['category'], categories_dict)
 
     # Also add the parent categories
     broken_category = categ.split(">")
@@ -347,7 +357,7 @@ def add_image(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
     alph = 'abcdefghijklmnopqrstuvwxyz'
-    image_dir = 'catalog/product/' + CATEGORY.replace('>', '/') \
+    image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
               + '/' + product_info["number"] + ".jpg"
 
     # Write image directory
@@ -370,7 +380,7 @@ def add_image(product_info, wb):
         row = sheet.max_row
         last_product_id = products_sheet['A' + str(row_num - 1)].value
         curr_product_id = last_product_id + 1
-        image_dir = 'catalog/product/' + CATEGORY.replace('>', '/') \
+        image_dir = 'catalog/product/' + product_info['category'].replace('>', '/') \
                   + '/' + product_info["number"] + alph[i] + ".jpg"
         sheet['A' + str(row)] = curr_product_id
         sheet['B' + str(row)] = image_dir
@@ -395,6 +405,39 @@ def add_discount(product_info, wb):
     discounts_sheet['D' + str(row)] = price*(1 - discount/100)
     discounts_sheet['E' + str(row)] = '0000-00-00'
     discounts_sheet['F' + str(row)] = '0000-00-00'
+
+def add_filters(product_info, wb):
+    products_sheet = wb['Products']
+    filters_sheet = wb['ProductFilters']
+    row = filters_sheet.max_row + 1
+    row_num = products_sheet.max_row
+    last_product_id = products_sheet['A' + str(row_num - 1)].value
+    curr_product_id = last_product_id + 1
+
+    filters_sheet.append(['' for i in range(filters_sheet.max_column)])
+    filters_sheet['A' + str(row)] = curr_product_id
+    filters_sheet['B' + str(row)] = "Υλικό Δεσίματος"
+    filters_sheet['C' + str(row)] = product_info['name material'][0].capitalize()
+
+    filters_sheet.append(['' for i in range(filters_sheet.max_column)])
+    filters_sheet['A' + str(row+1)] = curr_product_id
+    filters_sheet['B' + str(row+1)] = "Μάρκα"
+    filters_sheet['C' + str(row+1)] = product_info['brand']
+
+    filters_sheet.append(['' for i in range(filters_sheet.max_column)])
+    filters_sheet['A' + str(row+2)] = curr_product_id
+    filters_sheet['B' + str(row+2)] = "Διαστάσεις Δεσίματος"
+    filters_sheet['C' + str(row+2)] = product_info['ΔΙΑΣΤΑΣΕΙΣ'][0][0:2] + "mm"
+
+    filters_sheet.append(['' for i in range(filters_sheet.max_column)])
+    filters_sheet['A' + str(row+3)] = curr_product_id
+    filters_sheet['B' + str(row+3)] = "Χρώμα"
+    filters_sheet['C' + str(row+3)] = "Άλλο"
+    for color in FILTER_COLORS:
+        if color in product_info['ΧΡΩΜΑ'][0].lower():
+            filters_sheet['C' + str(row+3)] = color.capitalize()
+    return
+
 
 def add_misc(product_info, wb):
     products_sheet = wb['Products']
@@ -448,11 +491,12 @@ if __name__ == '__main__':
         add_status(product, wb)
         add_image(product, wb)
         add_discount(product, wb)
+        add_filters(product, wb)
         add_misc(product, wb)
         products += 1
 
     # Cleanup and Save to file
-    # exit()
+    #exit()
     print("Added {} products.".format(products))
     cleanup(wb)
     wb.save(products_xlsx)

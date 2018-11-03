@@ -581,19 +581,18 @@ def add_filters(product_info, wb):
         filters_sheet['B' + str(row)] = "Φύλο"
         filters_sheet['C' + str(row)] = product_info['gender'][0]
     else:
-        if "steel" in product_info['ΥΛΙΚΟ'][1]:
+        if "steel" in product_info['ΥΛΙΚΟ'][1].lower():
             filters_sheet.append(['' for i in range(filters_sheet.max_column)])
             filters_sheet['A' + str(row)] = curr_product_id
             filters_sheet['B' + str(row)] = "Μέταλλο"
             filters_sheet['C' + str(row)] = "Ατσάλι"
             row += 1
-        elif "ορείχαλκος" in product_info['ΥΛΙΚΟ'][0]:
+        elif "brass" in product_info['ΥΛΙΚΟ'][1].lower():
             filters_sheet.append(['' for i in range(filters_sheet.max_column)])
             filters_sheet['A' + str(row)] = curr_product_id
             filters_sheet['B' + str(row)] = "Μέταλλο"
             filters_sheet['C' + str(row)] = "Ορείχαλκος"
             row += 1 
-        # elif "ορείχαλκος" in product_info['ΥΛΙΚΟ'][0]:
         else:
             pprint("Didn't expect that material")
             exit()
