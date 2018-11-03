@@ -566,6 +566,42 @@ def add_discount(product_info, wb):
     discounts_sheet['E' + str(row)] = '0000-00-00'
     discounts_sheet['F' + str(row)] = '0000-00-00'
 
+def add_filters(product_info, wb):
+    products_sheet = wb['Products']
+    filters_sheet = wb['ProductFilters']
+    row = filters_sheet.max_row + 1
+    row_num = products_sheet.max_row
+    last_product_id = products_sheet['A' + str(row_num - 1)].value
+    curr_product_id = last_product_id + 1
+
+    categ = product_info["category"].split(">")[0]
+    if categ == "ACCESSORIES":
+        filters_sheet.append(['' for i in range(filters_sheet.max_column)])
+        filters_sheet['A' + str(row)] = curr_product_id
+        filters_sheet['B' + str(row)] = "Φύλο"
+        filters_sheet['C' + str(row)] = product_info['gender'][0]
+    else:
+        if "steel" in product_info['ΥΛΙΚΟ'][1]:
+            filters_sheet.append(['' for i in range(filters_sheet.max_column)])
+            filters_sheet['A' + str(row)] = curr_product_id
+            filters_sheet['B' + str(row)] = "Μέταλλο"
+            filters_sheet['C' + str(row)] = "Ατσάλι"
+            row += 1
+        elif "ορείχαλκος" in product_info['ΥΛΙΚΟ'][0]:
+            filters_sheet.append(['' for i in range(filters_sheet.max_column)])
+            filters_sheet['A' + str(row)] = curr_product_id
+            filters_sheet['B' + str(row)] = "Μέταλλο"
+            filters_sheet['C' + str(row)] = "Ορείχαλκος"
+            row += 1 
+        # elif "ορείχαλκος" in product_info['ΥΛΙΚΟ'][0]:
+        else:
+            pprint("Didn't expect that material")
+            exit()
+
+        filters_sheet.append(['' for i in range(filters_sheet.max_column)])
+        filters_sheet['A' + str(row)] = curr_product_id
+        filters_sheet['B' + str(row)] = "Μάρκα"
+        filters_sheet['C' + str(row)] = "Jos Von Arx"
 
 def add_misc(product_info, wb):
     products_sheet = wb['Products']
@@ -620,6 +656,7 @@ if __name__ == '__main__':
         add_status(product, wb)
         add_image(product, wb)
         add_discount(product, wb)
+        add_filters(product, wb)
         add_misc(product, wb)
         products_count += 1
 

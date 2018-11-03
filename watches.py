@@ -537,6 +537,28 @@ def add_discount(product_info, wb):
     discounts_sheet['E' + str(row)] = '0000-00-00'
     discounts_sheet['F' + str(row)] = '0000-00-00'
 
+def add_filters(product_info, attributes, wb):
+    products_sheet = wb['Products']
+    filters_sheet = wb['ProductFilters']
+    row = filters_sheet.max_row + 1
+    row_num = products_sheet.max_row
+    last_product_id = products_sheet['A' + str(row_num - 1)].value
+    curr_product_id = last_product_id + 1
+
+    filters_sheet.append(['' for i in range(filters_sheet.max_column)])
+    filters_sheet['A' + str(row)] = curr_product_id
+    filters_sheet['B' + str(row)] = "Φύλο"
+    filters_sheet['C' + str(row)] = attributes['ΦΥΛΟ'][0]
+
+    filters_sheet.append(['' for i in range(filters_sheet.max_column)])
+    filters_sheet['A' + str(row+1)] = curr_product_id
+    filters_sheet['B' + str(row+1)] = "Δέσιμο"
+    if "bracelet" in attributes['ΥΛΙΚΟ ΔΕΣΙΜΑΤΟΣ'][1].lower():
+        filters_sheet['C' + str(row+1)] = "Μπρασελέ"
+    else:
+        filters_sheet['C' + str(row+1)] = "Λουράκι"
+
+
 def add_misc(product_info, wb):
     products_sheet = wb['Products']
     row_num = products_sheet.max_row
@@ -591,6 +613,7 @@ if __name__ == '__main__':
         add_image(product, wb)
         add_discount(product, wb)
         add_status(product, wb)
+        add_filters(product, attributes, wb)
         add_misc(product, wb)
         products += 1
 
