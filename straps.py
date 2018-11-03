@@ -426,18 +426,17 @@ def add_filters(product_info, wb):
 
     filters_sheet.append(['' for i in range(filters_sheet.max_column)])
     filters_sheet['A' + str(row+2)] = curr_product_id
-    filters_sheet['B' + str(row+2)] = "Διαστάσεις Δεσίματος"
-    filters_sheet['C' + str(row+2)] = product_info['ΔΙΑΣΤΑΣΕΙΣ'][0][0:2] + "mm"
-
-    filters_sheet.append(['' for i in range(filters_sheet.max_column)])
-    filters_sheet['A' + str(row+3)] = curr_product_id
-    filters_sheet['B' + str(row+3)] = "Χρώμα"
-    filters_sheet['C' + str(row+3)] = "Άλλο"
+    filters_sheet['B' + str(row+2)] = "Χρώμα"
+    filters_sheet['C' + str(row+2)] = "Άλλο"
     for color in FILTER_COLORS:
         if color in product_info['ΧΡΩΜΑ'][0].lower():
-            filters_sheet['C' + str(row+3)] = color.capitalize()
-    return
+            filters_sheet['C' + str(row+2)] = color.capitalize()
 
+    if product_info['ΔΙΑΣΤΑΣΕΙΣ'][0]:
+        filters_sheet.append(['' for i in range(filters_sheet.max_column)])
+        filters_sheet['A' + str(row+3)] = curr_product_id
+        filters_sheet['B' + str(row+3)] = "Διαστάσεις Δεσίματος"
+        filters_sheet['C' + str(row+3)] = product_info['ΔΙΑΣΤΑΣΕΙΣ'][0][0:2] + "mm"
 
 def add_misc(product_info, wb):
     products_sheet = wb['Products']

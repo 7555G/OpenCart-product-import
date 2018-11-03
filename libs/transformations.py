@@ -220,7 +220,7 @@ straps_material_names = {
     "toro":         ['Toro', 'Toro', 1],
     "galant":       ['Galant', 'Galant', 1],
     "calf":         ['Calf', 'Calf', 1],
-    "nato":         ['Nato', 'Ναtο', 1],
+    "nato":         ['Nato', 'Nato', 1],
     "ravenna":      ['ravenna', 'δερμάτινο Ραβένα', 1],
     "leather":      ['leather', 'δέρμα', 1],
     # " ":            ['__stop', '__stop', 3],
